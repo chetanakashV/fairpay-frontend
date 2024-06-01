@@ -1,13 +1,12 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 
 import Navbar from "../Components/Navbar";
 import Lottie from "react-lottie";
 import animationData from '../Lotties/Animation - 1715485093970.json'
-import { MotionConfig } from "framer-motion";
+import './styles.css'
 
 
 const Landing = () => {
-    const [index, setIndex] = useState(0);
     const defaultOptions = {
         loop: true,
         autoplay: true,
@@ -19,15 +18,14 @@ const Landing = () => {
    
       
     return(
-        <div className="setbg">
+        <div className="auth-container">
             <Navbar isSelected = "Landing"/> 
-            <div style = {{margin: "50px 0 0 0"}}>
-            <motion></motion>
-            <Lottie
-            options={defaultOptions}
-             height={600}
-             width={600}
-            />
+            <div className="landing-container">
+               <Lottie
+                  options={defaultOptions}
+                  height={600}
+                  width={600}
+                />
             </div>
            
         </div>

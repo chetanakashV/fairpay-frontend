@@ -11,6 +11,14 @@
     height: 98vh;
 }
 
+.landing-container{
+    display: grid;
+    height: 90%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
 .login-container{
     text-align: center;
     background-color: white;
