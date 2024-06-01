@@ -1,0 +1,285 @@
+
+/* navbar */
+.navbar-container{
+  background-color: #1cc29f;
+  display: flex;
+  height: 10%;
+  width: 99vw;
+  border-radius: 15px;
+  column-gap: 70%;
+  overflow: hidden;
+}
+
+.button-container{
+  background-color: none;
+  display: flex;
+  width: 20%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  column-gap: 10%;
+}
+
+.button1{
+  background: none;
+  border: none;
+  border-radius: 10px;
+  height: 60%;
+  cursor: pointer;  
+  font-size: larger;
+  /* text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden; */
+
+  @media screen and (max-width: 800px) {
+    font-size: large;
+  }
+
+  @media screen and (max-width: 500px) {
+    font-size: medium;
+  }
+}
+
+.button1:hover{
+  background-color: white;
+}
+
+.appLogo{
+    height: 100%;
+    width: 7%;
+    margin-left: 3%;
+    cursor: pointer;
+}
+/* ends */
+
+
+.title{
+  font-size: larger;
+}
+
+.title-container{
+  /* background-color: red; */
+  font-size: xx-large;
+  color: #3c4044;
+  font-weight: 600;
+  position: absolute;
+  top: 3%;
+  left: 8%;
+  transition: left 0.5s;
+}
+
+.title-container-right{
+  color: black; 
+  font-size: xx-large;
+  color: #3c4044;
+  font-weight: 600;
+  position: absolute;
+  top: 3%;
+  left: 18%;
+  transition: left 0.5s;
+  
+}
+
+
+
+
+.backdrop{
+  position: absolute; 
+  top: 0; 
+  left: 0; 
+  height: 100%;
+  width: 100%;
+  background: #000000e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar{
+  overflow: hidden;
+  position: absolute; 
+  background-color: white;
+  height: 100%; 
+  width: 15vw; 
+  padding: 15vh 0 0 0 ; 
+  transition: width 0.5s, z-index 0.5s;
+  overflow: hidden;
+  border-right: 1px solid lightgray;
+  z-index: 1;
+  font-size: medium;
+}
+
+.sidebar-closed{
+  position: absolute; 
+  background-color: white;
+  width: 80px;
+  height: 100vh;
+  padding: 15vh 0 0 0 ; 
+  transition: width 0.5s, z-index 0.5s;
+  overflow: hidden;
+  border-right: 1px solid lightgray;
+}
+
+.sidebar-hovered{
+  display: flex;
+  font-size: larger;
+  flex-direction: row;
+  height: 65px;
+  color: #1cc29f; 
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0 10px 0;  
+  /* background-color: #2aab8f; */
+  cursor: pointer; 
+  border-left: 5px solid #1cc29f;
+}
+
+
+.hide-text{
+  display: none;
+}
+
+.sidebar-logo{
+  display: flex;
+  font-size: larger;
+  flex-direction: row;
+  height: 60px;
+  color: white; 
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0 10px 0; 
+  margin-top: -15vh;
+  margin-bottom: 12vh;
+}
+
+.sidebar-icon #logo{
+  flex: 30%;
+}
+
+.sidebar-option{
+  display: flex;
+  font-size: larger;
+  flex-direction: row;
+  height: 65px;
+  color: #959595; 
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0 10px 0; 
+}
+
+.sidebar-logout{
+  display: flex;
+  flex-direction: row;
+  font-size: larger;
+  height: 65px;
+  color: #959595; 
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0 10px 0; 
+  margin-top: 11vh;
+}
+
+
+.sidebar-logout:hover{
+  border-left: 5px #1cc29f solid;
+  cursor: pointer; 
+  color: #1cc29f;
+}
+
+.sidebar-text{
+  flex: 30%;
+  width: 15%;
+  justify-content: left;
+  padding-right: 20%;
+}
+
+.sidebar-text #logo{
+  overlay:auto;
+  z-index: 1;
+}
+
+.sidebar-icon #logo{
+  z-index: 0;
+}
+
+.sidebar-icon{
+  flex: 30%;
+  justify-content: center;
+  display: grid;
+  padding-left: 10%;
+}
+
+
+
+.profile-container{
+  position: absolute;
+  height: 175px;
+  margin-top: 17px;
+  border-radius: 5px;
+  width: 10%;
+  top: 0; 
+  left: 88%; 
+}
+
+.profile{
+  position: inherit;
+  background-color: white;
+  display: flex;
+  width: 100%;
+  height: 43px;
+  border-radius: 10px;
+  cursor: pointer; 
+}
+
+.profile-image{
+  background-color: black;
+  border-radius: 10px;
+  width: 25%;
+}
+
+.profile-name{
+  position: relative;
+  top: 0%;
+  display: grid;
+  align-items: center;
+  left: 9%;
+  text-align: left;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 50%; 
+}
+
+.profile-icon{
+  position: relative;
+  top: 0%;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  /* background-color: red; */
+  left: 5%;
+  justify-content: center;
+  width: 20%;
+}
+
+.profile-options{
+  background-color: white;
+  position: relative; 
+  z-index: 1;
+  top: 25%; 
+  left: -30%;
+  border-radius: 8px;
+  width: 130%;
+  border: 1px solid lightgray; 
+}
+
+.profile-option{
+  padding: 10px; 
+  text-align:justify;
+  cursor: pointer;
+  padding-left: 10px;
+}
+
+.profile-option:hover{
+  background-color: #1cc29f;
+  color: white;
+}
