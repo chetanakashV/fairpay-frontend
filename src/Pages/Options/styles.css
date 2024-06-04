@@ -13,13 +13,12 @@
     background-color: #d8d8d8;
 }
 
+/* Groups  */
+
 .group-container{
     height: 85%;
     width: 100%;
-    margin-top: 5%;
-    margin-bottom: 0;
-    margin-right: 1%; 
-    margin-left: 6%;
+    margin: 5% 1% 0 6%;
     border-radius: 5px;
     display: flex;
     transition: width 0.5s, margin-left 0.5s;
@@ -28,10 +27,7 @@
 .group-container-closed{
     height: 85%;
     width: 83%;
-    margin-left: 16%;
-    margin-top: 5%;
-    margin-right: 0; 
-    margin-bottom: 0;
+    margin: 5% 0 0 16%; 
     border-radius: 5px;
     display: flex;
     transition: width 0.5s, margin-left 0.5s;
@@ -101,7 +97,6 @@
 
 .group-element{
  display: flex;
- /* border-bottom: 1px solid lightgray; */
  border-radius: 5px;
  height: 11%;
  padding-left: 5%;
@@ -285,10 +280,14 @@
     margin-left: 5%;
 }
 
+/* ends */
+
+
+/* Settings */
+
 .settings-container{
     height: 90%;
     width: 100%;
-    /* margin: 5% 1% 0 6%;  */
     overflow:auto;
     scrollbar-width:none;
     margin-top: 5%;
@@ -326,10 +325,13 @@
     padding: 2% 0 0 2%;
 }
 
+/* ends */
+
+/* Account */
+
 .account-container{
     height: 90%;
     width: 100%;
-    /* margin: 5% 1% 0 6%;  */
     overflow:auto;
     scrollbar-width:none;
     margin-top: 5%;
@@ -382,27 +384,6 @@
    
 }
 
-.button-2{
-    border: 2px solid #1cc29f;
-    background: none;
-    cursor: pointer; 
-    color: #1cc29f;
-    background-color: none;
-    height: max(50%, 25px);
-    width: 300px;
-    margin-left: 6%;
-    margin-bottom: 2%;
-    border-radius: 10px;
-    text-align: center;
-    font-size: large;
-    transition: font-size 0.5s;
-}
-
-.button-2#dlt{
-    border: 2px solid red ;
-    color: red;  
-}
-
 .user-details{
     height: 86%;
     width: 35%;
@@ -410,22 +391,6 @@
     margin-right: 5%;
 }
 
-.input-1{
-    width: 90%;
-    margin-left: 10%;
-    margin-bottom: 6%;
-    text-align: center;
-}
-
-.input-1#username{
-    margin-bottom: 15%;
-    margin-top: 0;
-}
-
-.label-1{
-    margin-left: 10%;
-    font-size: larger;
-}
 
 .second-container{
     display: grid;
@@ -451,6 +416,77 @@
     margin-bottom: 15%;
     padding-left: 27%;
 }
+
+/* ends */
+
+/* Dashboard */
+
+.dashboard-main-container{
+    height: 88%;
+    width: 93%;
+    margin: 5% 0 0 6%; 
+    background-color: aqua;
+    padding: "1%";
+    transition: width 0.5s, margin-left 0.5s;
+}
+
+.dashboard-main-container-closed{
+    height: 88%;
+    width: 83%;
+    margin: 5% 0 0 16%;
+    background-color: aqua;
+    transition: width 0.5s, margin-left 0.5s;
+}
+
+.dashboard-summary-container{
+    height: 30%;
+    width: 90%;
+    background-color: red;
+}
+
+/* ends */
+
+
+
+.button-2{
+    border: 2px solid #1cc29f;
+    background: none;
+    cursor: pointer; 
+    color: #1cc29f;
+    background-color: none;
+    height: max(50%, 25px);
+    width: 300px;
+    margin-left: 6%;
+    margin-bottom: 2%;
+    border-radius: 10px;
+    text-align: center;
+    font-size: large;
+    transition: font-size 0.5s;
+}
+
+.button-2#dlt{
+    border: 2px solid red ;
+    color: red;  
+}
+
+
+.input-1{
+    width: 90%;
+    margin-left: 10%;
+    margin-bottom: 6%;
+    text-align: center;
+}
+
+.input-1#username{
+    margin-bottom: 15%;
+    margin-top: 0;
+}
+
+.label-1{
+    margin-left: 10%;
+    font-size: larger;
+}
+
 
 .button-3{
     background: none;

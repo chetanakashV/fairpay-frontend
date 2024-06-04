@@ -133,7 +133,7 @@ const Groups = () => {
         setUsers(JSON.parse(group.groupUsersBody))
         console.log(JSON.parse(group.groupUsersBody))
         setExpenses(JSON.parse(group.expensesBody))
-
+        console.log(JSON.parse(group.expensesBody))
         setGroupLoad(false);
     }
     
@@ -276,7 +276,8 @@ const Groups = () => {
                                      > <Paid/> Add Expense
                                       </div>
                                      <div className="more-verti-option"> <Info/> Group Info</div>
-                                     <div className="more-verti-option"> <Analytics/> Group Summary</div>
+                                     <div className="more-verti-option" 
+                                     onClick={() => {console.log(expenses)}}> <Analytics/> Group Summary</div>
                                      </div>}
                                     </div>
                                     

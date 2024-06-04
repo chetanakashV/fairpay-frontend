@@ -16,6 +16,13 @@ const Dashboard = () => {
         <div className='page-container'>
         <Sidebar option = "Dashboard" handleBar={handleBar}/> 
         <Profile/> <Title title="Dashboard" bar = {bar}/>
+
+            <div className={bar? 'dashboard-main-container-closed':'dashboard-main-container'}>
+                <div className='dashboard-summary-container'>
+                    hello
+                </div>
+            </div>
+
         </div>
     )
 }

@@ -5,10 +5,12 @@ import { SocketContext, UserContext } from "../../Helper/UserContext";
 import {useContext, useEffect, useState} from 'react'; 
 import './styles.css'
 import { Close } from "@mui/icons-material";
+import  Axios  from "axios";
+
 
 const CreateExpensePop = ({handleClose, selectedGroup}) => {
 
-    const date = new Date(); 
+    const [date, setDate] = useState('');
 
     const {client, connected} = useContext(SocketContext); 
     const {user} = useContext(UserContext)
@@ -32,7 +34,7 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
     const [paymentDetails, setPaymentDetails] = useState({
         description: "",
         contributorId: "", 
-        transactionDate: date,
+        transactionDate: new Date(),
         totalAmount: 0.0,
         participants: [] 
     })
@@ -40,32 +42,75 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
     const handleInput = (e) => {
         setPaymentDetails((prev) => ({
             ...prev, 
-            [e.target.name]: e.target.value
+            [e.target.name]: e.target.name=="totalAmount"? Number(e.target.value) : e.target.value
         }))
     }
 
+    const formatDate = (isoString) => {
+        const dateObj = new Date(isoString);
+        const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+        return dateObj.toLocaleDateString(undefined, options);
+    };
+
+    useEffect(() => {
+        // Get today's date in YYYY-MM-DD format
+        const today = new Date().toISOString();
+        setDate(today);
+        setPaymentDetails((prev) =>({
+            ...prev, 
+            transactionDate: new Date()
+        }))
+        
+    }, []);
+
     const handleNumber = (item,e) => {
         paymentDetails.participants.forEach((dataEl) =>{
-            if(dataEl[0] == item.userId){
-                dataEl[1] = Number(e.target.value)
+            if(dataEl.userId == item.userId){
+                dataEl.balance = Number(e.target.value)
                 setTLoad(!tLoad)
             }
         })
       
     }
 
+
+    const handleDateChange = (event) => {
+        setDate(event.target.value);
+        setPaymentDetails((prev) => ({
+            ...prev, 
+            transactionDate: new Date(event.target.value)
+        }))
+    };
+
     useEffect(() => {
         let temp = 0; 
         paymentDetails.participants.forEach((dataEl) => {
-            temp += dataEl[1];
+            temp += dataEl.balance;
         })
         setTotal(temp)
     }, [tLoad])
 
     const handleSubmit = () => {
-        if(total != paymentDetails.totalAmount) toast.error("The Numbers doesn't add up!!")
+        if(total != paymentDetails.totalAmount) toast.error("Numbers don't add up!!")
         else {
-            toast.success("Adding Expense")
+            Axios.post(`${process.env.REACT_APP_SERVER_URI}/expenses/addExpense`, {
+                 contributorId: paymentDetails.contributorId,
+                 description: paymentDetails.description,
+                 totalAmount: paymentDetails.totalAmount, 
+                 transactionDate: paymentDetails.transactionDate,
+                 participants: paymentDetails.participants,
+                 groupId: selectedGroup.groupId
+            }).then(response => {
+                if(response.data.status == 200){
+                    toast.success(response.data.message)
+                    setTimeout(() => {
+                        handleClose(); 
+                    }, 1000)
+                }
+                else {
+                    toast.error(response.data.message)
+                }
+            })
         }
     }
 
@@ -80,7 +125,10 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
             }))
             let tempPart = [];
             users.map((dataEl) => {
-                tempPart.push([dataEl.userId, 0.0])
+                tempPart.push({
+                    userId: dataEl.userId, 
+                    balance: 0.0
+                })
             })
 
             setPaymentDetails((prev) => ({
@@ -249,10 +297,13 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                     display: "flex", 
                     justifyContent: "center",
                     height: "20%" , 
-                    alignItems: "start",
+                    alignItems: "center",
                     width: "100%",
+                    columnGap: "2%"
                 }}>
+                <div>
                     Paid by  
+                </div>
 
                 { !userLoad && 
                   <div style={{
@@ -333,9 +384,27 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                      </div>
                     }
 
-                    <div>
+                    <span>
                         on
-                    </div> 
+                    </span> 
+
+                    <div style={{
+                        width: "15%",
+                        height: "35%", 
+                        display: "flex", 
+                        alignItems: "center",
+                        border: "1px solid #959595", 
+                        borderRadius: "10px",
+                        overflow: "hidden"
+                    }}>
+                        <input type="date" defaultValue={date.split('T')[0]} onChange={handleDateChange} style={{
+                            width: "100%", 
+                            height: "100%", 
+                            fontSize: "small", 
+                            border: "none", 
+                            cursor: "pointer"
+                        }} />
+                    </div>
 
                 </div>
                  <div style={{
