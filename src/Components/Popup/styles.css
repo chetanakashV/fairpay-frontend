@@ -95,13 +95,14 @@
 
 .input-3{
     border: none;
-    border-bottom: 1px dotted #d8d8d8;
+    border-bottom: 1px dotted #959595;
     border-radius: 0px;
 }
 
 .input-3:placeholder-shown{
     text-align: center;
 }
+
 
 .input-3:focus{
     border-bottom: 1px dotted #d8d8d8;

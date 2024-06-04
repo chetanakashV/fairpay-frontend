@@ -91,6 +91,7 @@
     justify-content: start;
     padding-left: 8%;
     cursor: pointer;
+    font-size: small;
 }
 
 .more-verti-option:hover{
@@ -145,10 +146,10 @@
 .group-item-name{
     text-align: left;
     padding-left: 5%;
-    height: 50%;
+    height: 55%;
     width: 70%;
     padding-top: 2%;    
-    font-size: larger;
+    font-size: large;
     align-items: center;
     white-space: nowrap;
     overflow: hidden;
@@ -158,7 +159,7 @@
 
 .group-item-description{
     text-align: left;
-    height: 28%;
+    height: 30%;
     width: 70%;
     padding-left: 5%;
     font-size:small;
@@ -221,10 +222,10 @@
 }
 
 .group-details-container1{
-    height: 90%;
+    height: 100%;
     width: 10%;
     display: grid;
-    align-items: center;
+    /* align-items: center; */
     justify-content: center;
 }
 

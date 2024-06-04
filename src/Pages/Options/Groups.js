@@ -195,6 +195,8 @@ const Groups = () => {
                 {showExpensePop && <CreateExpensePop
                  handleClose={handleExpenseClose} showToast = {showToast} selectedGroup={selectedGroup}/>}
             </AnimatePresence>
+
+            
              <div className={bar? "group-container-closed": "group-container"}>
                  <div className="group-name-container">
                    <div className="group-been-in">

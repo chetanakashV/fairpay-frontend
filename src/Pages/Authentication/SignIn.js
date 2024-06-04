@@ -40,16 +40,18 @@ const SignIn = () => {
             userEmail: logInDetails.userMail, 
             password: logInDetails.userPwd
         }).then(response => {
-            if(response.data.response.status == 400) toast.error(response.data.response.message)
+            if(response.data.response.status == 400){
+                 toast.error(response.data.response.message);
+                return "error";}
                 else if(response.data.response.status == 200){ 
                     toast.success("You're successfully logged In")
                     setLogIn(true);
                     setUser(response.data.user);
                     sessionStorage.setItem("logIn", true)
             }
-            return "done"
-        }).then(() => {
-            navigate('/dashboard')
+            return "done";
+        }).then(response => {
+            if(response == "done") navigate('/dashboard')
         })
         
     }
@@ -64,13 +66,13 @@ const SignIn = () => {
                   <div className='signin-heading'> Log In</div>
                      <div className='signin-details'>
                         <div className='signin-element'>
-                            <label>Email address</label>
-                            <input type='text' className='signin-input'
+                            <label >Email address</label>
+                            <input type='text' className='signin-input' required
                              name='userMail' onChange={handleChange}/>
                         </div>
                         <div className='signin-element'>
-                            <label>Password</label>
-                            <input type='text' className='signin-input'
+                            <label >Password</label>
+                            <input type='password' className='signin-input' required
                              name='userPwd' onChange={handleChange}/>
                         </div>
                   <ReCAPTCHA

@@ -127,6 +127,7 @@
   height: 65px;
   color: #1cc29f; 
   justify-content: center;
+  border-radius: 3px;
   align-items: center;
   padding: 10px 0 10px 0;  
   /* background-color: #2aab8f; */

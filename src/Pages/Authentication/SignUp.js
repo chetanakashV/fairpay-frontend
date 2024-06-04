@@ -95,17 +95,17 @@ const SignUp = () => {
                             <div className='signup-iy'> INTRODUCE YOURSELF</div>
                             <div className='signup-element'>
                             <label> Hi there! My name is</label>
-                            <input type='text' name='userName' className='inp' onChange={handleChange}/>
+                            <input type='text' name='userName' maxLength={8} minLength={3} className='inp' required onChange={handleChange}/>
                             </div>
                             <AnimatePresence>
                             {toggle && <motion.div>
                               <div className='signup-element'>
                                 <label> Here's my email address:</label>
-                                <input type='text' name='userEmail' className='inp' onChange={handleChange}/>
+                                <input type='text' name='userEmail' required className='inp' onChange={handleChange}/>
                               </div>
                               <div className='signup-element'>
                                 <label> and here's my password:</label>
-                                <input type='text' name='userPwd' className='inp' onChange={handleChange}/>
+                                <input type='password' name='userPwd' required className='inp' onChange={handleChange}/> 
                               </div>
                               <ReCAPTCHA
                                 sitekey={process.env.REACT_APP_SITE_KEY}
