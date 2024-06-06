@@ -90,6 +90,28 @@ const Groups = () => {
         }
     }
 
+    const getMonth = (timestamp) => {
+        let date = new Date(timestamp);
+
+        let month = date.toLocaleString('en-US', { month: 'long', timeZone: 'Asia/Kolkata' });
+
+        return month; 
+    }
+
+    const getDate = (timestamp) => {
+        let date = new Date(timestamp);
+
+        let day = String(date.getDate()).padStart(2, "0");
+
+        return day; 
+    }
+
+    const getISO = (timestamp) => {
+        let date = new Date(timestamp);
+
+        return date.toISOString().split('T')[0]; 
+    }
+
     const defaultOptions = {
         loop: true,
         autoplay: true,
@@ -125,10 +147,13 @@ const Groups = () => {
         });
         
     }
-    
-    const getGroupDetails = (res) => {
-        let group = JSON.parse(res);
 
+    const getUserById = (userId) => {
+        
+    }
+    
+    const getGroupDetails = async(res) => {
+        let group = JSON.parse(res);
         setSelectedGroup(group);
         setUsers(JSON.parse(group.groupUsersBody))
         console.log(JSON.parse(group.groupUsersBody))
@@ -136,6 +161,20 @@ const Groups = () => {
         console.log(JSON.parse(group.expensesBody))
         setGroupLoad(false);
     }
+
+    useEffect(() => {
+
+        if (!groupLoad && selectedGroup && selectedGroup.expensesBody) {
+            const parsedExpenses = JSON.parse(selectedGroup.expensesBody).map(expense => {
+                return {
+                    ...expense,
+                    transactionDate: new Date(expense.transactionDate)
+                };
+            });
+            const sortedExpenses = parsedExpenses.sort((a, b) => b.transactionDate - a.transactionDate);
+            setExpenses(sortedExpenses);
+        }
+    }, [groupLoad, selectedGroup])
     
     useEffect(() => {
         var subscription; 
@@ -223,7 +262,7 @@ const Groups = () => {
                             <div className="group-element" 
                             style={selectedGroup.groupId==dataEl[3]?{backgroundColor: "#d8d8d8"}: {backgroundColor: "white"}}
                             onClick={() => handleSelectGroup(dataEl)}>
-                                 <img src = {dataEl[0]} className="group-item-image"/>
+                                 <img src = {dataEl[0]} className="group-item-image" />
                                 <div className="group-item-container">
                                  <div className="group-item-name" title={dataEl[1]}> {dataEl[1]} </div>
                                  <div className="group-item-description" title={dataEl[2]}
@@ -284,7 +323,31 @@ const Groups = () => {
                             </div>
                         </div>
                         <div className="group-details-body">
+                             {expenses && expenses.map((dataEl) => {
+                                return(
+                                    <div className="group-expense-element-container" 
+                                    style={dataEl.contributorId == user._id ? 
+                                    {justifyContent: "end"} : {justifyContent: "start"}}>
+                                        <div className="group-expense-element" title={getISO(dataEl.transactionDate)}>
+                                           
+                                            <div className="group-expense-date" >
+                                                <div className="group-expense-date-month">
+                                                    {getMonth(dataEl.transactionDate)}
+                                                </div>
+                                                <div className="group-expense-date-day">
+                                                    {getDate(dataEl.transactionDate)}
+                                                </div>
+                                            </div>
+                                            <div className="group-expense-description">
+                                                {dataEl.description}
+                                            </div>
+                                            <div className="group-expense-details">
 
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                             })}
                         </div>
                  </div>
                  {groupMenu && <div className="group-menu-container">

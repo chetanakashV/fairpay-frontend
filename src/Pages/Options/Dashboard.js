@@ -144,12 +144,17 @@ const Dashboard = () => {
                         <div className='dashboard-balance-container1'>
                             <div className='dashboard-balance-title'> Total Balance</div>
                             <div className='dashboard-balance-amount' 
-                            style={balance.totalBalance >= 0? {
+                            style={balance.totalBalance > 0? {
                                 color: "#1cc29f"
-                            } : {
+                            } :
+                            balance.totalBalance<0 ? {
                                 color: "#ff6632"
-                            }} >
-                            {balance.totalBalance<0 ? "-" : "+"}₹
+                            } :
+                            {
+
+                            }
+                            } >
+                            {balance.totalBalance<0 ? "-" : balance.totalBalance>0? "+": ""}₹
                             {Math.abs(balance.totalBalance).toFixed(2)}
                             </div>
                         </div>
@@ -190,7 +195,7 @@ const Dashboard = () => {
                                                 <img src = {dataEl.groupPhoto} width="100%" height="100%"/>
                                             </div>
                                             <div className='dashboard-group-element-name'>
-                                                {dataEl.groupName}
+                                                {dataEl.groupName} 
                                             </div>
                                             <div className='dashboard-group-element-amount'>
                                             ₹{(-1*dataEl.groupBalance).toFixed(2)}

@@ -33,6 +33,75 @@
     transition: width 0.5s, margin-left 0.5s;
 }
 
+.group-expense-element-container{
+    width: 100%;
+    height: 15%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    display: flex;
+}
+
+.group-expense-element{
+    height: 100%;
+    width: 60%;
+    display: flex;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #959595;
+    padding: 0.5%;
+    cursor: pointer;
+}
+
+.group-expense-date{
+    height: 100%;
+    width: 15%;
+    border-right: 1px solid #d8d8d8;
+    /* background-color: aqua; */
+  
+}
+
+.group-expense-date-month{
+    width: 100%;
+    height: 35%;
+    /* background-color: bisque; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.group-expense-date-day{
+    width: 100%;
+    height: 65%;
+    /* background-color: brown; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: x-large;
+}
+
+.group-expense-date-year{
+    width: 100%;
+    height: 0%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.group-expense-description{
+    height: 100%;
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: larger;
+}
+
+.group-expense-details{
+    height: 100%;
+    width: 35%;
+    background-color: orange;
+}
+
 
 .group-name-container{
     height: 100%;
@@ -110,10 +179,10 @@
 }
 
 .group-item-image{
-    width: 20%;
+    width: 18%;
     border-radius: 50px;
-    padding: 3%;
-    border: 1px; 
+    margin: 3%;
+    border: 1px solid #d8d8d8; 
 }
 
 .group-item-container{
@@ -146,6 +215,7 @@
     padding-top: 2%;    
     font-size: large;
     align-items: center;
+
     white-space: nowrap;
     overflow: hidden;
     text-overflow:ellipsis;
@@ -610,6 +680,12 @@
     justify-content: left;
     font-size: large;
     padding-left: 2%;
+    padding-right: 2%;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
 }
 
 .dashboard-group-element-amount{
@@ -620,6 +696,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
+    
 }
 
 
