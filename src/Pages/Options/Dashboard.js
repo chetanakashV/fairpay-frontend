@@ -24,6 +24,10 @@ const Dashboard = () => {
         amountOwed: 0
     })
 
+    const [groups1, setGroups1] = useState([])
+    const [groups2, setGroups2] = useState([])
+    const [groups3, setGroups3] = useState([])
+
     const handleBar = (state) => {setBar(state);}
     const {client, connected} = useContext(SocketContext);
     const {user} = useContext(UserContext);
@@ -84,7 +88,7 @@ const Dashboard = () => {
 
     })
 
-    const fetchDashboard = (data) => {
+    const fetchDashboard = async (data) => {
         const res = JSON.parse(data.body);
 
         setBalance({
@@ -92,6 +96,26 @@ const Dashboard = () => {
             amountOwed: res.amountOwed, 
             amountYouOwe: res.amountYouOwe
         })        
+
+        console.log(res.groups)
+        
+        let tempGroups = [[],[],[]];
+
+        await res.groups.forEach(element => {
+            if(element.groupBalance == 0){
+                tempGroups[2].push(element);
+            }
+            else if(element.groupBalance > 0){
+                tempGroups[1].push(element);
+            }
+            else {
+                tempGroups[0].push(element);
+            }
+        });
+
+        setGroups1(tempGroups[0]);
+        setGroups2(tempGroups[1]);
+        setGroups3(tempGroups[2]);
 
         setLoad(false)
 
@@ -104,7 +128,7 @@ const Dashboard = () => {
 
             {load ? 
                 
-                <div className={bar? 'dashboard-main-container-closed': 'dashboard-main-container'}>
+                <div className={bar? 'dashboard-main-container-closed': 'dashboard-main-container'} >
                     <Lottie
                         options={defaultOptions}
                         height={500}
@@ -144,17 +168,88 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                <div className='dashboard-group-summary-container' 
-                style={groupsOpen? {height:"fit-content"}: {}}>
+                <div className='dashboard-group-summary-container'  
+                style={groupsOpen? {height:"auto"}: {height:"55%", overflow:"hidden"}}
+                >
                     <div className='dashboard-gs'>Group Summary</div>
                     <div className='dashboard-groups-container' 
-                style={groupsOpen? {height:"fit-content"}: {}} ref={groupRef}>
-                       
+                    // style={groupsOpen? {height:""}: {}}
+                ref={groupRef}>
+
+                     <div className='dashboard-group-container1' 
+                     onClick={() => {console.log(groups1);}}
+                        >
+                            <div className='dashboard-group-container-title'>
+                                Groups You Owe
+                            </div>
+                            <div className='dashboard-group-container-body'>
+                                {groups1 && groups1.map((dataEl) => {
+                                    return(
+                                        <div className='dashboard-group-element'>
+                                            <div className='dashboard-group-element-image'>
+                                                <img src = {dataEl.groupPhoto} width="100%" height="100%"/>
+                                            </div>
+                                            <div className='dashboard-group-element-name'>
+                                                {dataEl.groupName}
+                                            </div>
+                                            <div className='dashboard-group-element-amount'>
+                                            ₹{(-1*dataEl.groupBalance).toFixed(2)}
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                     </div>
+                     <div className='dashboard-group-container2'
+                     onClick={() => {console.log( groups2);}}>
+                            <div className='dashboard-group-container-title'>
+                                Groups Owe to You
+                            </div>
+                            <div className='dashboard-group-container-body'>
+                                {groups2 && groups2.map((dataEl) =>{
+                                    return(
+                                        <div className='dashboard-group-element'>
+                                            <div className='dashboard-group-element-image'>
+                                                <img src = {dataEl.groupPhoto} width="100%" height="100%"/>
+                                            </div>
+                                            <div className='dashboard-group-element-name'>
+                                                {dataEl.groupName}
+                                            </div>
+                                            <div className='dashboard-group-element-amount'>
+                                            ₹{dataEl.groupBalance.toFixed(2)}
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+
+                     </div>
+                     <div className='dashboard-group-container3'
+                     onClick={() => {console.log( groups3);}}>
+                            <div className='dashboard-group-container-title'>
+                                Settled Up Groups
+                            </div>
+                            <div className='dashboard-group-container-body'>
+                                {groups3 && groups3.map((dataEl) => {
+                                    return(
+                                        <div className='dashboard-group-element'>
+                                            <div className='dashboard-group-element-image'>
+                                                <img src = {dataEl.groupPhoto} width="100%" height="97%"/>
+                                            </div>
+                                            <div className='dashboard-group-element-name'>
+                                                {dataEl.groupName}
+                                            </div>
+                                            <div className='dashboard-group-element-amount'>
+                                            {/* ₹{dataEl.groupBalance.toFixed(2)} */}
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+
+                     </div>
+
                     </div>
-                    {groupOverflow &&
-                     <div className='dashboard-groups-va' onClick={() => {setGroupsOpen(!groupsOpen)}}>
-                        {groupsOpen? "Hide all":"View all"}
-                    </div>}
                 </div>
 
             </div>}
