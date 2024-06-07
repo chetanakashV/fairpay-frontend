@@ -1,48 +1,37 @@
 import { useState, useEffect, useContext } from "react";
-
 import Sidebar from '../../Components/Sidebar';
 import Profile from "../../Components/Profile";
 import Title from '../../Components/Title';
-
 import { SocketContext, UserContext } from "../../Helper/UserContext";
 import { ToastContainer, toast } from "react-toastify";
-
 import { AnimatePresence, motion } from "framer-motion";
 import Lottie from "react-lottie";
 import animationData from '../../Lotties/ChatsLoading.json';
 import animationData2 from '../../Lotties/GroupsLoading.json';
-
 import CreateGroup from '../../Components/Popup/CreateGroupPop';
 import CreateExpensePop from "../../Components/Popup/CreateExpensePop";
-
 import { Add, MoreVert, Paid, Info, Delete, Analytics, Close } from '@mui/icons-material';
-
 import './styles.css';
 
 const Groups = () => {
-    const [bar, setBar] = useState(false); 
-
-    const { client, connected } = useContext(SocketContext);  
+    const [bar, setBar] = useState(false);
+    const { client, connected } = useContext(SocketContext);
     const { user } = useContext(UserContext);
-    const [sub, setSub] = useState(false); 
+    const [sub, setSub] = useState(false);
     const [groups, setGroups] = useState([]);
     const [load, setLoad] = useState(true);
     const [groupLoad, setGroupLoad] = useState(false);
-
     const [userLookup, setUserLookup] = useState({});
-
     const [showPop, setShowPop] = useState(false);
     const [showExpensePop, setShowExpensePop] = useState(false);
-
     const [selectedGroup, setSelectedGroup] = useState([]);
     const [users, setUsers] = useState([]);
     const [expenses, setExpenses] = useState([]);
     const [isGroupSelected, setIsGroupSelected] = useState(false);
-
     const [groupMenu, setGroupMenu] = useState(false);
     const [groupMenuOptions, setGroupMenuOptions] = useState(false);
 
-    const showToast = (type, text) => { 
+    const showToast = (type, text) => {
         if(type === "success") toast.success(text);
         else if(type === "error") toast.error(text);
     }
@@ -74,8 +63,8 @@ const Groups = () => {
         try {
             setGroups([]);
             const tempGroups = JSON.parse(body).map(dataEl => [
-                dataEl.groupPhoto, 
-                dataEl.groupName, 
+                dataEl.groupPhoto,
+                dataEl.groupName,
                 dataEl.groupDescription,
                 dataEl._id
             ]);
@@ -91,18 +80,18 @@ const Groups = () => {
     const getMonth = (timestamp) => {
         let date = new Date(timestamp);
         let month = date.toLocaleString('en-US', { month: 'long', timeZone: 'Asia/Kolkata' });
-        return month; 
+        return month;
     }
 
     const getDate = (timestamp) => {
         let date = new Date(timestamp);
         let day = String(date.getDate()).padStart(2, "0");
-        return day; 
+        return day;
     }
 
     const getISO = (timestamp) => {
         let date = new Date(timestamp);
-        return date.toISOString().split('T')[0]; 
+        return date.toISOString().split('T')[0];
     }
 
     const defaultOptions = {
@@ -127,22 +116,22 @@ const Groups = () => {
         const newGroup = JSON.parse(res);
         const newItem = [newGroup.groupPhoto, newGroup.groupName, newGroup.groupDescription, newGroup._id];
         console.table(newItem);
-        
+
         setGroups((prevGroups) => {
             const groupExists = prevGroups.some(group => group[3] === newItem[3]);
-            if(!groupExists) {
+            if (!groupExists) {
                 return [...prevGroups, newItem];
             }
         });
     }
 
-    const getGroupDetails = async(res) => {
+    const getGroupDetails = async (res) => {
         let group = JSON.parse(res);
         setSelectedGroup(group);
         let userTemp = JSON.parse(group.groupUsersBody);
         setUsers(userTemp);
         console.log("Users:", userTemp);
-        
+
         const parsedExpenses = JSON.parse(group.expensesBody).map(expense => {
             return {
                 ...expense,
@@ -155,27 +144,37 @@ const Groups = () => {
     }
 
     useEffect(() => {
-        if(users.length > 0){
+        if (users.length > 0) {
             users.forEach((dataEl) => {
                 setUserLookup((prev) => ({
                     ...prev,
-                    [dataEl.userId] : dataEl 
-                }))
-            })
+                    [dataEl.userId]: dataEl
+                }));
+            });
         }
-    }, [users])
+    }, [users]);
 
     const getUserById = (userId) => {
         return userLookup[userId] || { userName: "not found" };
     }
 
-    const getAmountFromExpense = (dataEl) =>{
+    const getAmountFromExpense = (dataEl) => {
         let value = 5.5;
         dataEl.participants.forEach((element) => {
-            if(element.userId == user._id)  value = element.balance.toFixed(2); 
-        })   
-        
+            if (element.userId === user._id) value = element.balance.toFixed(2);
+        });
+
         return value;
+    }
+
+    const addNewExpense = async (data) => {
+        let newItem = JSON.parse(data);
+        console.log("being called ");
+        console.log(data);
+        setExpenses((prevExpenses) => {
+            const newExpenses = [...prevExpenses, newItem].sort((a, b) => new Date(b.transactionDate) - new Date(a.transactionDate));
+            return newExpenses;
+        });
     }
 
     useEffect(() => {
@@ -192,14 +191,36 @@ const Groups = () => {
     }, [groupLoad, selectedGroup]);
 
     useEffect(() => {
-        var subscription; 
+        let selSub;
+        if (client && connected && selectedGroup) {
+            const timer = setTimeout(() => {
+                selSub = client.subscribe(`/groups/selectedGroup/${selectedGroup.groupId}`,
+                    (msg) => {
+                        const response = JSON.parse(msg.body);
+                        if (response.messageType === "newExpense") addNewExpense(response.body);
+                        else console.log(msg)
+                    });
+                console.log("subscribed to group " + selectedGroup.groupName);
+            }, 500);
+
+            return () => {
+                clearTimeout(timer);
+                if (selSub) {
+                    selSub.unsubscribe();
+                }
+            }
+        }
+    }, [selectedGroup, client, connected]);
+
+    useEffect(() => {
+        var subscription;
         if (connected && client) {
             const timer = setTimeout(() => {
                 subscription = client.subscribe(`/groups/${user._id}`, (msg) => {
                     const response = JSON.parse(msg.body);
-                    if(response.messageType === "userGroups") fetchUserGroups(response.body);
-                    else if(response.messageType === "NewGroup") addNewGroup(response.body);
-                    else if(response.messageType === "groupDetails") getGroupDetails(response.body);
+                    if (response.messageType === "userGroups") fetchUserGroups(response.body);
+                    else if (response.messageType === "NewGroup") addNewGroup(response.body);
+                    else if (response.messageType === "groupDetails") getGroupDetails(response.body);
                     else console.log(response);
                 });
                 console.log("subscribed!!");
@@ -217,15 +238,15 @@ const Groups = () => {
     }, [client, connected]);
 
     useEffect(() => {
-        if(sub){
+        if (sub) {
             client.send(`/app/getGroups/${user._id}`, {}, "");
         }
     }, [sub]);
 
-    return(
+    return (
         <div className="page-container">
             <Sidebar option="Groups" handleBar={handleBar} />
-            <Profile/> <Title title="Groups" bar={bar}/>
+            <Profile /> <Title title="Groups" bar={bar} />
             <AnimatePresence
                 initial={false}
                 mode="wait"
@@ -246,16 +267,16 @@ const Groups = () => {
             <div className={bar ? "group-container-closed" : "group-container"}>
                 <div className="group-name-container">
                     <div className="group-been-in">
-                        Groups you've been in  
-                        {!showPop && !showExpensePop  && <Add className="create-group-icon" onClick={() => setShowPop(true)} />}
-                    </div> 
+                        Groups you've been in
+                        {!showPop && !showExpensePop && <Add className="create-group-icon" onClick={() => setShowPop(true)} />}
+                    </div>
                     <div className="group-list-container">
                         {load ?
-                            <div> 
+                            <div>
                                 <Lottie options={defaultOptions} height={300} width={300} />
                             </div> :
                             groups.map((dataEl) => (
-                                <div className="group-element" 
+                                <div className="group-element"
                                     style={selectedGroup.groupId === dataEl[3] ? { backgroundColor: "#d8d8d8" } : { backgroundColor: "white" }}
                                     onClick={() => handleSelectGroup(dataEl)}>
                                     <img src={dataEl[0]} className="group-item-image" />
@@ -269,7 +290,7 @@ const Groups = () => {
                     </div>
                 </div>
                 {isGroupSelected ?
-                    !groupLoad ? 
+                    !groupLoad ?
                         <div className="group-main-container">
                             <div className={groupMenu ? "group-details-container-closed" : "group-details-container"}>
                                 <div className="group-details-heading">
@@ -304,9 +325,9 @@ const Groups = () => {
                                 </div>
                                 <div className="group-details-body">
                                     {expenses && expenses.map((dataEl) => (
-                                        <div className="group-expense-element-container" >
+                                        <div className="group-expense-element-container">
                                             <div className="group-expense-element" title={getISO(dataEl.transactionDate)}>
-                                                <div className="group-expense-date" >
+                                                <div className="group-expense-date">
                                                     <div className="group-expense-date-month">
                                                         {getMonth(dataEl.transactionDate)}
                                                     </div>
@@ -318,47 +339,46 @@ const Groups = () => {
                                                     {dataEl.description}
                                                 </div>
                                                 <div className="group-expense-paid">
-                                                       <div id="cont1">
+                                                    <div id="cont1">
                                                         {users &&
-                                                        dataEl.contributorId==user._id?"You ":
-                                                         getUserById(dataEl.contributorId).userName + " "}
-                                                         paid
-                                                       </div>
-                                                       <div id="cont2">
-                                                       ₹
-                                                       {dataEl.totalAmount.toFixed(2)}
-                                                       </div>
+                                                            dataEl.contributorId === user._id ? "You " :
+                                                            getUserById(dataEl.contributorId).userName + " "}
+                                                        paid
+                                                    </div>
+                                                    <div id="cont2">
+                                                        ₹
+                                                        {dataEl.totalAmount.toFixed(2)}
+                                                    </div>
                                                 </div>
                                                 <div className="group-expense-lent">
-                                                       <div id="cont1">
+                                                    <div id="cont1">
                                                         {users &&
-                                                        dataEl.contributorId==user._id?"You ":
-                                                         getUserById(dataEl.contributorId).userName + " "}
-                                                         lent
-                                                       </div>
-                                                       <div id="cont2" style={dataEl.contributorId == user._id? {color: "#1cc29f"}: {color: "#ff652f"}}>
-                                                       ₹
-                                                       {users && 
-                                                       dataEl.contributorId==user._id?
-                                                       ( dataEl.totalAmount - getAmountFromExpense(dataEl)).toFixed(2):
-                                                       getAmountFromExpense(dataEl)}
-                                                       </div>
-
+                                                            dataEl.contributorId === user._id ? "You " :
+                                                            getUserById(dataEl.contributorId).userName + " "}
+                                                        lent
+                                                    </div>
+                                                    <div id="cont2" style={dataEl.contributorId === user._id ? { color: "#1cc29f" } : { color: "#ff652f" }}>
+                                                        ₹
+                                                        {users &&
+                                                            dataEl.contributorId === user._id ?
+                                                            (dataEl.totalAmount - getAmountFromExpense(dataEl)).toFixed(2) :
+                                                            getAmountFromExpense(dataEl)}
+                                                    </div>
                                                 </div>
-                                               <div className="group-expense-delete">
+                                                <div className="group-expense-delete">
                                                     <Close />
                                                 </div>
                                             </div>
                                         </div>
                                     ))}
-                                    
+
                                 </div>
                             </div>
                             {groupMenu && <div className="group-menu-container">
                             </div>}
                         </div> :
-                        <div className="group-main-container" 
-                            style={{ display: "grid", alignItems: "start", justifyContent: "center" }}> 
+                        <div className="group-main-container"
+                            style={{ display: "grid", alignItems: "start", justifyContent: "center" }}>
                             <Lottie options={defaultOptions2} height={500} width={500} />
                         </div> :
                     <div className="group-main-container"></div>
