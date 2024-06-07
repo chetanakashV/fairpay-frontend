@@ -35,15 +35,15 @@
 
 .group-expense-element-container{
     width: 100%;
-    height: 15%;
-    margin-top: 1%;
-    margin-bottom: 1%;
+    height: 14%;
+    margin-top: 2%;
+    margin-bottom: 2%;
     display: flex;
 }
 
 .group-expense-element{
     height: 100%;
-    width: 60%;
+    width: 100%;
     display: flex;
     border-radius: 10px;
     overflow: hidden;
@@ -54,16 +54,14 @@
 
 .group-expense-date{
     height: 100%;
-    width: 15%;
+    width: 10%;
     border-right: 1px solid #d8d8d8;
-    /* background-color: aqua; */
   
 }
 
 .group-expense-date-month{
     width: 100%;
     height: 35%;
-    /* background-color: bisque; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -72,7 +70,6 @@
 .group-expense-date-day{
     width: 100%;
     height: 65%;
-    /* background-color: brown; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -89,19 +86,79 @@
 
 .group-expense-description{
     height: 100%;
-    width: 50%;
+    width: 30%;
     display: flex;
-    justify-content: center;
+    justify-content: start;
+    padding-left: 2%;
     align-items: center;
     font-size: larger;
 }
 
-.group-expense-details{
+.group-expense-paid{
     height: 100%;
-    width: 35%;
-    background-color: orange;
+    width: 15%;
+    margin-left: 26%;
 }
 
+.group-expense-lent{
+    height: 100%;
+    width: 15%;
+}
+
+.group-expense-paid #cont1{
+    height: 45%;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    font-size:small;
+    justify-content: start;
+    color: #989898;
+}
+
+.group-expense-paid #cont2{
+    height: 55%;
+    display: flex;
+    justify-content: start;
+    font-size: large;
+    font-weight: 500;
+    }
+    
+    .group-expense-lent #cont1{
+        height: 45%;
+        width: 100%;
+        overflow: hidden;
+        display: flex;
+        font-size:small;
+        justify-content: start;
+        color: #989898;
+}
+
+.group-expense-lent #cont2{
+    height: 55%;
+    display: flex;
+    justify-content: start;
+    font-size: large;
+    font-weight: 500;
+}
+
+.group-expense-delete{
+    height: 100%;
+    width: 4%;
+    align-items: center;
+    justify-content: center;
+    display: none;
+    color: red; 
+    transition: transform 0.2s;
+}
+
+.group-expense-element:hover .group-expense-delete{
+    display: flex;
+}
+
+.group-expense-delete:hover{
+    transform: scale(1.2);
+    transition: transform 0.2s;
+}
 
 .group-name-container{
     height: 100%;
@@ -348,6 +405,8 @@
     background-color: white;
     margin-top: 1%;
     margin-left: 5%;
+    overflow: auto;
+    scrollbar-width: none;
 }
 
 /* ends */
@@ -666,7 +725,7 @@
 
 .dashboard-group-element-image{
     height: 100%;
-    width: 12%;
+    width: 46px;
     overflow: hidden;
     border-radius: 50px;
     border: 0.5px solid #959595;
