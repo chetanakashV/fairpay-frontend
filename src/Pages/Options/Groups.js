@@ -2,34 +2,44 @@ import { useState, useEffect, useContext } from "react";
 import Sidebar from '../../Components/Sidebar';
 import Profile from "../../Components/Profile";
 import Title from '../../Components/Title';
+
 import { SocketContext, UserContext } from "../../Helper/UserContext";
 import { ToastContainer, toast } from "react-toastify";
 import { AnimatePresence, motion } from "framer-motion";
 import Lottie from "react-lottie";
 import animationData from '../../Lotties/ChatsLoading.json';
 import animationData2 from '../../Lotties/GroupsLoading.json';
+
 import CreateGroup from '../../Components/Popup/CreateGroupPop';
 import CreateExpensePop from "../../Components/Popup/CreateExpensePop";
+
+import Axios from "axios";
+
 import { Add, MoreVert, Paid, Info, Delete, Analytics, Close } from '@mui/icons-material';
 import './styles.css';
 
 const Groups = () => {
     const [bar, setBar] = useState(false);
+
     const { client, connected } = useContext(SocketContext);
     const { user } = useContext(UserContext);
     const [sub, setSub] = useState(false);
-    const [groups, setGroups] = useState([]);
-    const [load, setLoad] = useState(true);
-    const [groupLoad, setGroupLoad] = useState(false);
-    const [userLookup, setUserLookup] = useState({});
+
     const [showPop, setShowPop] = useState(false);
     const [showExpensePop, setShowExpensePop] = useState(false);
-    const [selectedGroup, setSelectedGroup] = useState([]);
-    const [users, setUsers] = useState([]);
+    const [load, setLoad] = useState(true);
+    const [groupLoad, setGroupLoad] = useState(false);
+
     const [expenses, setExpenses] = useState([]);
+    const [users, setUsers] = useState([]);
+    const [groups, setGroups] = useState([]);
+    
     const [isGroupSelected, setIsGroupSelected] = useState(false);
+    const [selectedGroup, setSelectedGroup] = useState([]);
+
     const [groupMenu, setGroupMenu] = useState(false);
     const [groupMenuOptions, setGroupMenuOptions] = useState(false);
+    const [userLookup, setUserLookup] = useState({});
 
     const showToast = (type, text) => {
         if(type === "success") toast.success(text);
@@ -54,9 +64,14 @@ const Groups = () => {
 
     const handleSelectGroup = (item) => {
         setIsGroupSelected(true);
-        console.log(item);
         client.send(`/app/groupDetails/${user._id}`, {}, item[3]);
         setGroupLoad(true);
+    }
+
+    const handleDeleteExpense = (item) => {
+        Axios.post(`${process.env.REACT_APP_SERVER_URI}/expenses/deleteExpense`,
+            {expenseId: item}).then((response) => {
+        })
     }
 
     const fetchUserGroups = async (body) => {
@@ -169,12 +184,15 @@ const Groups = () => {
 
     const addNewExpense = async (data) => {
         let newItem = JSON.parse(data);
-        console.log("being called ");
         console.log(data);
         setExpenses((prevExpenses) => {
             const newExpenses = [...prevExpenses, newItem].sort((a, b) => new Date(b.transactionDate) - new Date(a.transactionDate));
             return newExpenses;
         });
+    }
+
+    const setDeletedExpense = (expenseId) => {
+        setExpenses((prevExpenses) => prevExpenses.filter(expense => expense._id !== expenseId));
     }
 
     useEffect(() => {
@@ -198,6 +216,8 @@ const Groups = () => {
                     (msg) => {
                         const response = JSON.parse(msg.body);
                         if (response.messageType === "newExpense") addNewExpense(response.body);
+                        else if(response.messageType === "deletedExpense") 
+                            setDeletedExpense(response.body)
                         else console.log(msg)
                     });
                 console.log("subscribed to group " + selectedGroup.groupName);
@@ -318,7 +338,7 @@ const Groups = () => {
                                                     setShowExpensePop(true);
                                                 }}> <Paid /> Add Expense</div>
                                                 <div className="more-verti-option"> <Info /> Group Info</div>
-                                                <div className="more-verti-option" onClick={() => { console.log(expenses); }}> <Analytics /> Group Summary</div>
+                                                <div className="more-verti-option"> <Analytics /> Group Summary</div>
                                             </div>}
                                         </div>
                                     </div>
@@ -366,7 +386,9 @@ const Groups = () => {
                                                     </div>
                                                 </div>
                                                 <div className="group-expense-delete">
-                                                    <Close />
+                                                    <Close
+                                                      onClick={() => handleDeleteExpense
+                                                      (dataEl._id)}/>
                                                 </div>
                                             </div>
                                         </div>

@@ -40,6 +40,7 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
     })
     
     const handleInput = (e) => {
+
         setPaymentDetails((prev) => ({
             ...prev, 
             [e.target.name]: e.target.name=="totalAmount"? Number(e.target.value) : e.target.value
@@ -90,29 +91,44 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
         setTotal(temp)
     }, [tLoad])
 
-    const handleSubmit = () => {
-        if(total != paymentDetails.totalAmount) toast.error("Numbers don't add up!!")
-        else {
-            Axios.post(`${process.env.REACT_APP_SERVER_URI}/expenses/addExpense`, {
-                 contributorId: paymentDetails.contributorId,
-                 description: paymentDetails.description,
-                 totalAmount: paymentDetails.totalAmount, 
-                 transactionDate: paymentDetails.transactionDate,
-                 participants: paymentDetails.participants,
-                 groupId: selectedGroup.groupId
-            }).then(response => {
-                if(response.data.status == 200){
-                    toast.success(response.data.message)
-                    setTimeout(() => {
-                        handleClose(); 
-                    }, 1000)
-                }
-                else {
-                    toast.error(response.data.message)
-                }
-            })
-        }
+    const check = async () => {
+        return new Promise((resolve, reject) => {
+            let hasNegativeBalance = false;
+            paymentDetails.participants.forEach((dataEl) => {
+                if (dataEl.balance < 0) hasNegativeBalance = true;
+            });
+            resolve(hasNegativeBalance);
+        });
     }
+
+    const handleSubmit = async () => {
+        let ans = await check();
+        console.log(ans);
+        if (total !== paymentDetails.totalAmount) {
+            toast.error("Numbers don't add up!!");
+        } else if (ans) {
+            toast.error("Contributions cannot be negative!!");
+        } else {
+            Axios.post(`${process.env.REACT_APP_SERVER_URI}/expenses/addExpense`, {
+                contributorId: paymentDetails.contributorId,
+                description: paymentDetails.description,
+                totalAmount: paymentDetails.totalAmount,
+                transactionDate: paymentDetails.transactionDate,
+                participants: paymentDetails.participants,
+                groupId: selectedGroup.groupId
+            }).then(response => {
+                if (response.data.status === 200) {
+                    toast.success(response.data.message);
+                    setTimeout(() => {
+                        handleClose();
+                    }, 1000);
+                } else {
+                    toast.error(response.data.message);
+                }
+            });
+        }
+    };
+    
 
 
     const handleNextPage = () => {
