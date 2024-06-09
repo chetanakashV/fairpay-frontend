@@ -15,7 +15,7 @@ import CreateExpensePop from "../../Components/Popup/CreateExpensePop";
 
 import Axios from "axios";
 
-import { Add, MoreVert, Paid, Info, Delete, Analytics, Close } from '@mui/icons-material';
+import { Add, MoreVert, Paid, Info, Delete, Analytics, Close, Edit } from '@mui/icons-material';
 import './styles.css';
 
 const Groups = () => {
@@ -36,6 +36,7 @@ const Groups = () => {
     
     const [isGroupSelected, setIsGroupSelected] = useState(false);
     const [selectedGroup, setSelectedGroup] = useState([]);
+    const [selectedExpense, setSelectedExpense] = useState("");
 
     const [groupMenu, setGroupMenu] = useState(false);
     const [groupMenuOptions, setGroupMenuOptions] = useState(false);
@@ -72,6 +73,11 @@ const Groups = () => {
         Axios.post(`${process.env.REACT_APP_SERVER_URI}/expenses/deleteExpense`,
             {expenseId: item}).then((response) => {
         })
+    }
+
+    const handleSelectExpense = (id) => {
+        if(selectedExpense == id) setSelectedExpense("");
+        else setSelectedExpense(id);
     }
 
     const fetchUserGroups = async (body) => {
@@ -337,6 +343,7 @@ const Groups = () => {
                                                     setGroupMenuOptions(false);
                                                     setShowExpensePop(true);
                                                 }}> <Paid /> Add Expense</div>
+                                                <div className="more-verti-option" onClick={()=>{setGroupMenu(!groupMenu)}}> <Edit/>  Edit Group</div>
                                                 <div className="more-verti-option"> <Info /> Group Info</div>
                                                 <div className="more-verti-option"> <Analytics /> Group Summary</div>
                                             </div>}
@@ -345,9 +352,17 @@ const Groups = () => {
                                 </div>
                                 <div className="group-details-body">
                                     {expenses && expenses.map((dataEl) => (
-                                        <div className="group-expense-element-container">
-                                            <div className="group-expense-element" title={getISO(dataEl.transactionDate)}>
-                                                <div className="group-expense-date">
+                                        <div className="group-expense-element-container" style={
+                                            dataEl._id == selectedExpense ? {
+                                                height: "55%"
+                                            }:{ }
+                                        }>
+                                            <div className="group-expense-element"
+                                            style={dataEl._id == selectedExpense ? {
+                                                height: "25%", transition: "height 0s"
+                                            }: {}}
+                                             onClick={() => {handleSelectExpense(dataEl._id)}} >
+                                                <div className="group-expense-date" title={getISO(dataEl.transactionDate)}>
                                                     <div className="group-expense-date-month">
                                                         {getMonth(dataEl.transactionDate)}
                                                     </div>
@@ -391,12 +406,34 @@ const Groups = () => {
                                                       (dataEl._id)}/>
                                                 </div>
                                             </div>
+                                             {dataEl._id==selectedExpense &&
+                                             <div className="expense-details">
+                                        
+
+                                                {dataEl.participants.map((el) => {
+                                                return(
+                                                    <div className="expense-details-element">
+                                                        <div  className="expense-details-element-image">
+                                                    <img src={getUserById(el.userId).userPhoto} width="75%"/>
+                                                        </div>
+                                                        <div
+                                                        className="expense-details-element-content"
+                                                     >
+                                                         {el.userId == dataEl.contributorId? getUserById(el.userId).userName + " paid " + dataEl.totalAmount + " and owes " : getUserById(el.userId).userName + " owes " }
+                                                         {el.balance}
+                                                        </div>
+                                                    </div>
+                                                )
+                                                })}
+
+                                             </div>}
                                         </div>
                                     ))}
 
                                 </div>
                             </div>
                             {groupMenu && <div className="group-menu-container">
+                            hi
                             </div>}
                         </div> :
                         <div className="group-main-container"

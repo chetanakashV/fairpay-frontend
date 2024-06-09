@@ -167,7 +167,7 @@ const Dashboard = () => {
                         <div className='dashboard-balance-container3'>
                             <div className='dashboard-balance-title'> Total Amount You're Owed</div>
                             <div className='dashboard-balance-amount' 
-                            style={balance.amountYouOwe>0 ? {color: "#1cc29f"} : {}}>₹
+                            style={balance.amountOwed>0 ? {color: "#1cc29f"} : {}}>₹
                             {balance.amountOwed.toFixed(2)}</div>
                         </div>
                     </div>
