@@ -12,6 +12,9 @@ const Activity = () => {
         <div className="page-container">
              <Sidebar option = "Activity" handleBar={handleBar}/>
              <Profile/> <Title title="Activity" bar={bar}/>
+             <div className={bar?"activity-container-closed" :"activity-container"}>
+
+             </div>
         </div>
     )
 }

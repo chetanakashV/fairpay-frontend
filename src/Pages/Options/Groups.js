@@ -6,12 +6,14 @@ import Title from '../../Components/Title';
 import { SocketContext, UserContext } from "../../Helper/UserContext";
 import { ToastContainer, toast } from "react-toastify";
 import { AnimatePresence, motion } from "framer-motion";
+
 import Lottie from "react-lottie";
 import animationData from '../../Lotties/ChatsLoading.json';
 import animationData2 from '../../Lotties/GroupsLoading.json';
 
 import CreateGroup from '../../Components/Popup/CreateGroupPop';
 import CreateExpensePop from "../../Components/Popup/CreateExpensePop";
+import GroupInfoPop from "../../Components/Popup/GroupInfoPop";
 
 import Axios from "axios";
 
@@ -27,18 +29,20 @@ const Groups = () => {
 
     const [showPop, setShowPop] = useState(false);
     const [showExpensePop, setShowExpensePop] = useState(false);
+    const [showGroupInfoPop, setShowGroupInfoPop] = useState(false);
+
     const [load, setLoad] = useState(true);
     const [groupLoad, setGroupLoad] = useState(false);
 
     const [expenses, setExpenses] = useState([]);
     const [users, setUsers] = useState([]);
+    const [groupParticipants, setGroupParticipants] = useState([]);
     const [groups, setGroups] = useState([]);
     
     const [isGroupSelected, setIsGroupSelected] = useState(false);
     const [selectedGroup, setSelectedGroup] = useState([]);
     const [selectedExpense, setSelectedExpense] = useState("");
 
-    const [groupMenu, setGroupMenu] = useState(false);
     const [groupMenuOptions, setGroupMenuOptions] = useState(false);
     const [userLookup, setUserLookup] = useState({});
 
@@ -53,6 +57,10 @@ const Groups = () => {
 
     const handleExpenseClose = () => {
         setShowExpensePop(false);
+    }
+
+    const handleGroupInfoClose = () => {
+        setShowGroupInfoPop(false);
     }
 
     const handleBar = (state) => {
@@ -149,6 +157,9 @@ const Groups = () => {
     const getGroupDetails = async (res) => {
         let group = JSON.parse(res);
         setSelectedGroup(group);
+        let gmBody = JSON.parse(group.groupMembersBody); 
+        setGroupParticipants(gmBody.groupParticipants);
+        console.table(gmBody.groupParticipants);
         let userTemp = JSON.parse(group.groupUsersBody);
         setUsers(userTemp);
         console.log("Users:", userTemp);
@@ -290,11 +301,21 @@ const Groups = () => {
                     handleClose={handleExpenseClose} showToast={showToast} selectedGroup={selectedGroup} />}
             </AnimatePresence>
 
+
+            <AnimatePresence
+                initial={false}
+                mode="wait"
+                onExitComplete={() => null}
+            >
+                {showGroupInfoPop && <GroupInfoPop
+                    handleClose={handleGroupInfoClose} users={groupParticipants} fetchUser = {getUserById} selectedGroup={selectedGroup}/>}
+            </AnimatePresence>
+
             <div className={bar ? "group-container-closed" : "group-container"}>
                 <div className="group-name-container">
                     <div className="group-been-in">
                         Groups you've been in
-                        {!showPop && !showExpensePop && <Add className="create-group-icon" onClick={() => setShowPop(true)} />}
+                        {!showPop && !showExpensePop && !showGroupInfoPop && <Add className="create-group-icon" onClick={() => setShowPop(true)} />}
                     </div>
                     <div className="group-list-container">
                         {load ?
@@ -318,7 +339,7 @@ const Groups = () => {
                 {isGroupSelected ?
                     !groupLoad ?
                         <div className="group-main-container">
-                            <div className={groupMenu ? "group-details-container-closed" : "group-details-container"}>
+                            <div className="group-details-container">
                                 <div className="group-details-heading">
                                     <div className="group-details-container1">
                                         <img src={selectedGroup.groupPhoto} height="80%" style={{ borderRadius: "50px" }} />
@@ -343,8 +364,12 @@ const Groups = () => {
                                                     setGroupMenuOptions(false);
                                                     setShowExpensePop(true);
                                                 }}> <Paid /> Add Expense</div>
-                                                <div className="more-verti-option" onClick={()=>{setGroupMenu(!groupMenu)}}> <Edit/>  Edit Group</div>
-                                                <div className="more-verti-option"> <Info /> Group Info</div>
+                                                <div className="more-verti-option" > <Edit/>  Edit Group</div>
+                                                <div className="more-verti-option" 
+                                                onClick={() => {
+                                                     setShowGroupInfoPop(true);
+                                                     setGroupMenuOptions(false);
+                                                     }}> <Info /> Group Info</div>
                                                 <div className="more-verti-option"> <Analytics /> Group Summary</div>
                                             </div>}
                                         </div>
@@ -432,9 +457,6 @@ const Groups = () => {
 
                                 </div>
                             </div>
-                            {groupMenu && <div className="group-menu-container">
-                            hi
-                            </div>}
                         </div> :
                         <div className="group-main-container"
                             style={{ display: "grid", alignItems: "start", justifyContent: "center" }}>

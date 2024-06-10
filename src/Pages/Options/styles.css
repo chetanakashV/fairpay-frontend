@@ -896,6 +896,31 @@
 /* ends */
 
 
+/* Activity */
+
+.activity-container{
+    height: 85%;
+    width: 100%;
+    margin: 5% 1% 0 6%;
+    border-radius: 5px;
+    display: flex;
+    background-color: white;
+    transition: width 0.5s, margin-left 0.5s;
+}
+
+.activity-container-closed{
+    height: 85%;
+    width: 83%;
+    margin: 5% 0 0 16%; 
+    background-color: white;
+    border-radius: 5px;
+    display: flex;
+    transition: width 0.5s, margin-left 0.5s;
+}
+
+/* ends */
+
+
 
 .button-2{
     border: 2px solid #1cc29f;
