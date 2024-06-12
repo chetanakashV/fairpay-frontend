@@ -74,6 +74,7 @@
     background-color: black;
     border-radius: 50px;
     display: flex;
+    overflow: hidden;
     margin-right: 1%;
     align-items: center;
     justify-content: center;

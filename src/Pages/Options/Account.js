@@ -12,7 +12,7 @@ import Axios  from 'axios';
 
 const Account = () => {
     const [bar, setBar] = useState(false);
-    var {user, loading} = useContext(UserContext);
+    var {user,setUser, loading} = useContext(UserContext);
     const [load, setLoad] = useState(true);
     const [reset, setReset] = useState(false);
     const [newDetails, setNewDetails] = useState({
@@ -55,6 +55,13 @@ const Account = () => {
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
     };
+
+    const handleDeleteImage = () =>{
+        setNewDetails((prev) => ({
+            ...prev, 
+            userPhoto: user.imageUrl
+        }))
+    }
 
     useEffect(() => {
         const handleFileUpload = async () => {
@@ -115,7 +122,16 @@ const Account = () => {
                 password: (newDetails.password!==""? newDetails.password: "dontChange"), 
                 userPhoto: newDetails.userPhoto
             }).then(response => {
-                if(response.data.status == 200) toast.success("Updated!! Changes Will be reflected on Next Login.")
+                if(response.data.status == 200){
+                     toast.success("Changes Saved Successfully! ");
+                     setUser((prev) => ({
+                        ...prev, 
+                        userName: newDetails.userName,
+                        userMobile: newDetails.userMobile, 
+                        userEmail: newDetails.userEmail, 
+                        imageUrl: newDetails.userPhoto
+                     }))
+                }
                 else {toast.error(response.data.message)}
             })
         }
@@ -154,7 +170,7 @@ const Account = () => {
                                     className='button-12' id='dlt'
                                     whileHover={{scale: "1.1"}}
                                     whileTap={{scale: "0.9"}}
-                                    onClick={() => {console.log(newDetails)}}
+                                    onClick={handleDeleteImage}
                                 >
                                     Delete Picture
                                 </motion.button>
