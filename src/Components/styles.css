@@ -234,7 +234,7 @@
 
 .profile-image{
   background-color: black;
-  border-radius: 100px;
+  border-radius: 10px;
   width: 25%;
   display: flex;
   align-items: center;
@@ -247,23 +247,24 @@
   top: 0%;
   display: grid;
   align-items: center;
-  left: 9%;
-  text-align: left;
-  text-overflow: ellipsis;
+  left: 0%;
+  text-align: center;
   overflow: hidden;
-  width: 50%; 
+  text-overflow: ellipsis;
+  width: 60%; 
 }
 
 .profile-icon{
   position: relative;
   top: 0%;
-  display: grid;
+  display: flex;
   align-items: center;
   justify-content: center;
   /* background-color: red; */
-  left: 5%;
+  left: 0%;
   justify-content: center;
-  width: 20%;
+  width: 15%;
+  
 }
 
 .profile-options{

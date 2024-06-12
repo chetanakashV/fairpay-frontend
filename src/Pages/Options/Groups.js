@@ -78,14 +78,19 @@ const Groups = () => {
         setGroupLoad(true);
     }
 
-    const handleDeleteExpense = (item) => {
-        setRecentExpense(item);
-        setTimeout(() =>{
+    const handleDeleteExpense = (item,e) => {
+        if(e.target.id == "expense-delete"){
+            e.stopPropagation();
+            alert("pressed1")
+        }
+        else {
+            setRecentExpense(item);
             Axios.post(`${process.env.REACT_APP_SERVER_URI}/expenses/deleteExpense`,
-                {expenseId: item._id}).then((response) => {
-            })
-        }, 1000)
+            {expenseId: item._id}).then((response) => {
+        })
+     
     }
+}
 
     const handleSelectExpense = (id) => {
         if(selectedExpense == id) setSelectedExpense("");
@@ -437,10 +442,10 @@ const Groups = () => {
                                                             getAmountFromExpense(dataEl)}
                                                     </div>
                                                 </div>
-                                                <div className="group-expense-delete">
-                                                    <Close
-                                                      onClick={() => handleDeleteExpense
-                                                      (dataEl)}/>
+                                                <div className="group-expense-delete" >
+                                                    <Close id="expense-delete"
+                                                      onClick={(e) => handleDeleteExpense
+                                                      (dataEl,e)}/>
                                                 </div>
                                             </div>
                                              {dataEl._id==selectedExpense &&
@@ -451,7 +456,7 @@ const Groups = () => {
                                                 return(
                                                     <div className="expense-details-element">
                                                         <div  className="expense-details-element-image">
-                                                    <img src={getUserById(el.userId).userPhoto} width="75%"/>
+                                                    <img src={getUserById(el.userId).userPhoto} width="100%" height="100%"/>
                                                         </div>
                                                         <div
                                                         className="expense-details-element-content"
