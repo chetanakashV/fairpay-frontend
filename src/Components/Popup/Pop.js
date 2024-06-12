@@ -41,7 +41,7 @@ const Pop = ({handleClose,mail, setOtpVerified, type }) => {
         exit="exit"
         drag
         >
-        {type=="otp" ? <OtpPop handleClose={handleClose} setOtpVerified = {setOtpVerified} mail={mail} showSuccessToast = {showSuccessToast}/>: null}
+         <OtpPop handleClose={handleClose} setOtpVerified = {setOtpVerified} mail={mail} showSuccessToast = {showSuccessToast}/>
         </motion.div>
         </Backdrop>
     )
