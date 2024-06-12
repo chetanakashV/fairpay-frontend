@@ -17,7 +17,7 @@ import GroupInfoPop from "../../Components/Popup/GroupInfoPop";
 
 import Axios from "axios";
 
-import { Add, MoreVert, Paid, Info, Delete, Analytics, Close, Edit } from '@mui/icons-material';
+import { Add, MoreVert, Paid, Info, Delete, Analytics, Close, Edit, Celebration } from '@mui/icons-material';
 import './styles.css';
 
 const Groups = () => {
@@ -42,6 +42,7 @@ const Groups = () => {
     const [isGroupSelected, setIsGroupSelected] = useState(false);
     const [selectedGroup, setSelectedGroup] = useState([]);
     const [selectedExpense, setSelectedExpense] = useState("");
+    const [recentExpense, setRecentExpense] = useState({});
 
     const [groupMenuOptions, setGroupMenuOptions] = useState(false);
     const [userLookup, setUserLookup] = useState({});
@@ -78,9 +79,12 @@ const Groups = () => {
     }
 
     const handleDeleteExpense = (item) => {
-        Axios.post(`${process.env.REACT_APP_SERVER_URI}/expenses/deleteExpense`,
-            {expenseId: item}).then((response) => {
-        })
+        setRecentExpense(item);
+        setTimeout(() =>{
+            Axios.post(`${process.env.REACT_APP_SERVER_URI}/expenses/deleteExpense`,
+                {expenseId: item._id}).then((response) => {
+            })
+        }, 1000)
     }
 
     const handleSelectExpense = (id) => {
@@ -159,6 +163,7 @@ const Groups = () => {
         setSelectedGroup(group);
         let gmBody = JSON.parse(group.groupMembersBody); 
         setGroupParticipants(gmBody.groupParticipants);
+
         console.table(gmBody.groupParticipants);
         let userTemp = JSON.parse(group.groupUsersBody);
         setUsers(userTemp);
@@ -174,18 +179,7 @@ const Groups = () => {
         setExpenses(sortedExpenses);
         setGroupLoad(false);
     }
-
-    useEffect(() => {
-        if (users.length > 0) {
-            users.forEach((dataEl) => {
-                setUserLookup((prev) => ({
-                    ...prev,
-                    [dataEl.userId]: dataEl
-                }));
-            });
-        }
-    }, [users]);
-
+  
     const getUserById = (userId) => {
         return userLookup[userId] || { userName: "not found" };
     }
@@ -201,16 +195,30 @@ const Groups = () => {
 
     const addNewExpense = async (data) => {
         let newItem = JSON.parse(data);
-        console.log(data);
+    
         setExpenses((prevExpenses) => {
             const newExpenses = [...prevExpenses, newItem].sort((a, b) => new Date(b.transactionDate) - new Date(a.transactionDate));
             return newExpenses;
         });
+    
+        
     }
 
-    const setDeletedExpense = (expenseId) => {
+    const setDeletedExpense = async (expenseId) => {
+
         setExpenses((prevExpenses) => prevExpenses.filter(expense => expense._id !== expenseId));
     }
+
+    useEffect(() => {
+        if (users.length > 0) {
+            users.forEach((dataEl) => {
+                setUserLookup((prev) => ({
+                    ...prev,
+                    [dataEl.userId]: dataEl
+                }));
+            });
+        }
+    }, [users]);
 
     useEffect(() => {
         if (!groupLoad && selectedGroup && selectedGroup.expensesBody) {
@@ -280,8 +288,12 @@ const Groups = () => {
         }
     }, [sub]);
 
+    const handleClicks = () =>{
+        if(groupMenuOptions) setGroupMenuOptions(false);
+    }
+
     return (
-        <div className="page-container">
+        <div className="page-container" onClick={handleClicks}>
             <Sidebar option="Groups" handleBar={handleBar} />
             <Profile /> <Title title="Groups" bar={bar} />
             <AnimatePresence
@@ -308,7 +320,7 @@ const Groups = () => {
                 onExitComplete={() => null}
             >
                 {showGroupInfoPop && <GroupInfoPop
-                    handleClose={handleGroupInfoClose} users={groupParticipants} fetchUser = {getUserById} selectedGroup={selectedGroup}/>}
+                    handleClose={handleGroupInfoClose}  users={groupParticipants} fetchUser = {getUserById} selectedGroup={selectedGroup}/>}
             </AnimatePresence>
 
             <div className={bar ? "group-container-closed" : "group-container"}>
@@ -369,8 +381,8 @@ const Groups = () => {
                                                 onClick={() => {
                                                      setShowGroupInfoPop(true);
                                                      setGroupMenuOptions(false);
-                                                     }}> <Info /> Group Info</div>
-                                                <div className="more-verti-option"> <Analytics /> Group Summary</div>
+                                                     }}> <Info /> Group Balances</div>
+                                              
                                             </div>}
                                         </div>
                                     </div>
@@ -428,7 +440,7 @@ const Groups = () => {
                                                 <div className="group-expense-delete">
                                                     <Close
                                                       onClick={() => handleDeleteExpense
-                                                      (dataEl._id)}/>
+                                                      (dataEl)}/>
                                                 </div>
                                             </div>
                                              {dataEl._id==selectedExpense &&

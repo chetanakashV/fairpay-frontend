@@ -46,8 +46,9 @@
 }
 
 .group-info-pop{
-    width: clamp(35%, 700px, 90%);
-    height: 70%; 
+    width: clamp(60%, 700px, 90%);
+    height: fit-content; 
+    max-height: 90%;
     margin: auto; 
     overflow: auto;
     scrollbar-width: none;
@@ -61,28 +62,28 @@
 
 .group-info-container{
     width: 100%;
-    height: 100%;
+    height: fit-content;
     text-align: left;
     transition: all 15s ease-out;
     overflow: hidden;
+    margin-bottom: 10%;
 }
 
 .group-info-container-1{
-    height: 10%;
+    height: 8%;
     width: 100%;
-    margin-top: 2%;
     display: flex;
     padding: 2%; 
     padding-left: 5%;
     align-items: center;
-    column-gap: 75%;
+   
 }
 
 .group-info-details-container{
     height: 70%;
     width: 90%;
     margin-left: 5%;
-    margin-top: 5%;
+    margin-top: 2%;
     border: 1px solid #959595;
     border-radius: 10px;
     overflow: auto;
@@ -91,14 +92,13 @@
 }
 
 .gid-element{
-    height: 20%;
+    min-height: 25%;
     width: 100%;
     display: flex;
     align-items: center;
     margin-top: 1%;
     padding: 1%;
     margin-bottom: 1%;
-    justify-content: center;
     overflow: hidden;
 }
 

@@ -234,8 +234,12 @@
 
 .profile-image{
   background-color: black;
-  border-radius: 10px;
+  border-radius: 100px;
   width: 25%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .profile-name{

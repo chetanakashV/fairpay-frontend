@@ -72,7 +72,7 @@ const SignIn = () => {
                         </div>
                         <div className='signin-element'>
                             <label >Password</label>
-                            <input type='password' className='signin-input' required
+                            <input type='password' className='signin-input' 
                              name='userPwd' onChange={handleChange}/>
                         </div>
                   <ReCAPTCHA

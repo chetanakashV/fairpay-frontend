@@ -47,13 +47,16 @@ const Profile = () => {
           preserveAspectRatio: "xMidYMid slice"
         }
       };
-
+    
+    const handleClicks = () => {
+        if(menu) setMenu(false);
+    }
     
     return(
         <div className='profile-container'>    
             <div className='profile' onClick={handleToggle}>
                 <div className='profile-image'>
-                     <img src ={user?.imageUrl} height = {"40px"} width={"40px"} alt="dp" />
+                     <img src ={user?.imageUrl} height = {"100%"} width={"100%"} alt="dp" />
                 </div>
                 <div className='profile-name' >
                      {user?.userName}

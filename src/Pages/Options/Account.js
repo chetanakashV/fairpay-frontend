@@ -14,7 +14,7 @@ const Account = () => {
     const [bar, setBar] = useState(false);
     var {user, loading} = useContext(UserContext);
     const [load, setLoad] = useState(true);
-    const [reset, setReset] = useState(false)
+    const [reset, setReset] = useState(false);
     const [newDetails, setNewDetails] = useState({
         userName: "", 
         userEmail: "",
@@ -22,8 +22,10 @@ const Account = () => {
         userPhoto: "", 
         password: "", 
         cnfPassword: ""
-    })
+        })
 
+    const [selectedFile, setSelectedFile] = useState(null);
+        
     const defaultOptions = {
         loop: true,
         autoplay: true,
@@ -49,6 +51,37 @@ const Account = () => {
         var re = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
         return re.test(str);
     }
+
+    const handleFileChange = (event) => {
+        setSelectedFile(event.target.files[0]);
+    };
+
+    useEffect(() => {
+        const handleFileUpload = async () => {
+            if (!selectedFile) return;
+
+            const formData = new FormData();
+            formData.append('image', selectedFile);
+
+            try {
+                const response = await Axios.post(`https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_IMAGE_API}`, formData);
+
+                if (response.data.success) {
+                    setNewDetails((prev) => ({
+                        ...prev,
+                        userPhoto: response.data.data.url
+                    }));
+                    toast.success('Image uploaded successfully!');
+                } else {
+                    toast.error('Uploading image failed');
+                }
+            } catch (error) {
+                toast.error('An error occurred while uploading the image');
+            }
+        };
+
+        handleFileUpload();
+    }, [selectedFile]);
 
     useEffect(() => {
         if(user){
@@ -79,7 +112,7 @@ const Account = () => {
                 userName: newDetails.userName, 
                 userEmail: newDetails.userEmail, 
                 userMobile: newDetails.userMobile, 
-                password: newDetails.password, 
+                password: (newDetails.password!==""? newDetails.password: "dontChange"), 
                 userPhoto: newDetails.userPhoto
             }).then(response => {
                 if(response.data.status == 200) toast.success("Updated!! Changes Will be reflected on Next Login.")
@@ -106,10 +139,12 @@ const Account = () => {
                         </div>
                         <div className='operations-container'>
                             <div className='button-container-5'>
+                            <input type="file" onChange={handleFileChange} style={{ display: 'none' }} id="fileInput" />
                                 <motion.button
                                     className='button-12'
                                     whileHover={{scale: "1.1"}}
                                     whileTap={{scale: "0.9"}}
+                                    onClick={() => document.getElementById('fileInput').click()}
                                 >
                                     Upload New Picture
                                 </motion.button>
@@ -119,6 +154,7 @@ const Account = () => {
                                     className='button-12' id='dlt'
                                     whileHover={{scale: "1.1"}}
                                     whileTap={{scale: "0.9"}}
+                                    onClick={() => {console.log(newDetails)}}
                                 >
                                     Delete Picture
                                 </motion.button>
