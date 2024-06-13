@@ -19,6 +19,7 @@ import Axios from "axios";
 
 import { Add, MoreVert, Paid, Info, Delete, Analytics, Close, Edit, Celebration } from '@mui/icons-material';
 import './styles.css';
+import EditGroup from "../../Components/Popup/EditGroupPop";
 
 const Groups = () => {
     const [bar, setBar] = useState(false);
@@ -30,6 +31,7 @@ const Groups = () => {
     const [showPop, setShowPop] = useState(false);
     const [showExpensePop, setShowExpensePop] = useState(false);
     const [showGroupInfoPop, setShowGroupInfoPop] = useState(false);
+    const [showEditGroupPop, setShowEditGroupPop] = useState(false);
 
     const [load, setLoad] = useState(true);
     const [groupLoad, setGroupLoad] = useState(false);
@@ -56,6 +58,10 @@ const Groups = () => {
         setShowPop(false);
     }
 
+    const handleEditGroupClose = () => {
+        setShowEditGroupPop(false);
+    }
+
     const handleExpenseClose = () => {
         setShowExpensePop(false);
     }
@@ -74,7 +80,7 @@ const Groups = () => {
 
     const handleSelectGroup = (item) => {
         setIsGroupSelected(true);
-        client.send(`/app/groupDetails/${user._id}`, {}, item[3]);
+        client.send(`/app/groupDetails/${user._id}`, {}, item.groupId);
         setGroupLoad(true);
     }
 
@@ -96,12 +102,22 @@ const Groups = () => {
     const fetchUserGroups = async (body) => {
         try {
             setGroups([]);
-            const tempGroups = JSON.parse(body).map(dataEl => [
-                dataEl.groupPhoto,
-                dataEl.groupName,
-                dataEl.groupDescription,
-                dataEl._id
-            ]);
+            // const tempGroups = JSON.parse(body).map(dataEl => [
+            //     dataEl.groupPhoto,
+            //     dataEl.groupName,
+            //     dataEl.groupDescription,
+            //     dataEl._id
+            // ]);
+            let tempGroups = [];
+            JSON.parse(body).map(dataEl =>{
+                tempGroups.push({
+                    groupPhoto: dataEl.groupPhoto, 
+                    groupName: dataEl.groupName, 
+                    groupDescription: dataEl.groupDescription, 
+                    groupId: dataEl._id, 
+                    groupTypes: dataEl.groupType
+                })
+            })
             setGroups(tempGroups);
             console.table(tempGroups);
             setLoad(false);
@@ -152,7 +168,7 @@ const Groups = () => {
         console.table(newItem);
 
         setGroups((prevGroups) => {
-            const groupExists = prevGroups.some(group => group[3] === newItem[3]);
+            const groupExists = prevGroups.some(group => group.groupId === newItem.groupId);
             if (!groupExists) {
                 return [...prevGroups, newItem];
             }
@@ -209,6 +225,62 @@ const Groups = () => {
 
         setExpenses((prevExpenses) => prevExpenses.filter(expense => expense._id !== expenseId));
     }
+
+    // const updateGroup = (data) => {
+    //     let newItem = JSON.parse(data);
+
+    //     let newGroup = {
+    //         groupId: newItem._id, 
+    //         groupName: newItem.groupName, 
+    //         groupDescription: newItem.groupDescription, 
+    //         groupPhoto: newItem.groupPhoto, 
+    //         groupType: newItem.groupType
+    //     }
+
+    //     setGroups(prevGroups => 
+    //         prevGroups.map(group => 
+    //             group.groupId === newGroup.groupId ? newGroup : group
+    //         )
+    //     );
+
+    //     if(isGroupSelected && selectedGroup.groupId == newGroup.groupId){ 
+    //         setSelectedGroup(newGroup); console.log("selected group modified")}
+    //     else {
+    //         console.log("no selected group")
+    //     }
+    // }
+
+    const updateGroup = (data) => {
+        let newItem = JSON.parse(data);
+    
+        let newGroup = {
+            groupId: newItem._id, 
+            groupName: newItem.groupName, 
+            groupDescription: newItem.groupDescription, 
+            groupPhoto: newItem.groupPhoto, 
+            groupType: newItem.groupType
+        };
+    
+        setGroups(prevGroups => 
+            prevGroups.map(group => 
+                group.groupId === newGroup.groupId ? newGroup : group
+            )
+        );
+    };
+    
+    // Use useEffect to monitor changes in the groups state
+    useEffect(() => {
+        if (isGroupSelected && selectedGroup && groups.length > 0) {
+            const updatedSelectedGroup = groups.find(group => group.groupId === selectedGroup.groupId);
+            if (updatedSelectedGroup) {
+                setSelectedGroup(updatedSelectedGroup);
+                console.log("selected group modified");
+            } else {
+                console.log("no selected group");
+            }
+        }
+    }, [groups, isGroupSelected, selectedGroup]);
+    
 
     useEffect(() => {
         if (users.length > 0) {
@@ -267,6 +339,7 @@ const Groups = () => {
                     if (response.messageType === "userGroups") fetchUserGroups(response.body);
                     else if (response.messageType === "NewGroup") addNewGroup(response.body);
                     else if (response.messageType === "groupDetails") getGroupDetails(response.body);
+                    else if (response.messageType == "groupUpdated") updateGroup(response.body);
                     else console.log(response);
                 });
                 console.log("subscribed!!");
@@ -314,6 +387,16 @@ const Groups = () => {
                     handleClose={handleExpenseClose} showToast={showToast} selectedGroup={selectedGroup} />}
             </AnimatePresence>
 
+            <AnimatePresence
+                initial={false}
+                mode="wait"
+                onExitComplete={() => null}
+            >
+                {showEditGroupPop && <EditGroup
+                    handleClose={handleEditGroupClose} groupUsers={users} 
+                     selectedGroup={selectedGroup} />}
+            </AnimatePresence>
+
 
             <AnimatePresence
                 initial={false}
@@ -328,7 +411,7 @@ const Groups = () => {
                 <div className="group-name-container">
                     <div className="group-been-in">
                         Groups you've been in
-                        {!showPop && !showExpensePop && !showGroupInfoPop && <Add className="create-group-icon" onClick={() => setShowPop(true)} />}
+                        {!showPop && !showExpensePop && !showEditGroupPop && !showGroupInfoPop && <Add className="create-group-icon" onClick={() => setShowPop(true)} />}
                     </div>
                     <div className="group-list-container">
                         {load ?
@@ -337,12 +420,12 @@ const Groups = () => {
                             </div> :
                             groups.map((dataEl) => (
                                 <div className="group-element"
-                                    style={selectedGroup.groupId === dataEl[3] ? { backgroundColor: "#d8d8d8" } : { backgroundColor: "white" }}
+                                    style={selectedGroup.groupId == dataEl.groupId ? { backgroundColor: "#d8d8d8" } : { backgroundColor: "white" }}
                                     onClick={() => handleSelectGroup(dataEl)}>
-                                    <img src={dataEl[0]} className="group-item-image" />
+                                    <img src={dataEl.groupPhoto} className="group-item-image" />
                                     <div className="group-item-container">
-                                        <div className="group-item-name" title={dataEl[1]}> {dataEl[1]} </div>
-                                        <div className="group-item-description" title={dataEl[2]}> {dataEl[2]} </div>
+                                        <div className="group-item-name" title={dataEl.groupName}> {dataEl.groupName} </div>
+                                        <div className="group-item-description" title={dataEl.groupDescription}> {dataEl.groupDescription} </div>
                                     </div>
                                 </div>
                             ))
@@ -355,7 +438,7 @@ const Groups = () => {
                             <div className="group-details-container">
                                 <div className="group-details-heading">
                                     <div className="group-details-container1">
-                                        <img src={selectedGroup.groupPhoto} height="80%" style={{ borderRadius: "50px" }} />
+                                        <img src={selectedGroup.groupPhoto} height="90%" width="90%" style={{ borderRadius: "50px" }} />
                                     </div>
                                     <div className="group-details-container2">
                                         <div className="group-details-container2-1">
@@ -377,7 +460,7 @@ const Groups = () => {
                                                     setGroupMenuOptions(false);
                                                     setShowExpensePop(true);
                                                 }}> <Paid /> Add Expense</div>
-                                                <div className="more-verti-option" > <Edit/>  Edit Group</div>
+                                                <div className="more-verti-option" onClick={() => {setShowEditGroupPop(true);}}> <Edit/>  Edit Group</div>
                                                 <div className="more-verti-option" 
                                                 onClick={() => {
                                                      setShowGroupInfoPop(true);
@@ -426,9 +509,9 @@ const Groups = () => {
                                                 <div className="group-expense-lent">
                                                     <div id="cont1">
                                                         {users &&
-                                                            dataEl.contributorId === user._id ? "You " :
-                                                            getUserById(dataEl.contributorId).userName + " "}
-                                                        lent
+                                                            dataEl.contributorId === user._id ? "You lent" :
+                                                            "You Owe "}
+                                                        
                                                     </div>
                                                     <div id="cont2" style={dataEl.contributorId === user._id ? { color: "#1cc29f" } : { color: "#ff652f" }}>
                                                         ₹

@@ -10,39 +10,19 @@ import { ToastContainer, toast } from "react-toastify";
 import { SocketContext, UserContext } from "../../Helper/UserContext";
 import './styles.css'
 
-const CreateGroup = ({handleClose, showToast}) => {
+const EditGroup = ({handleClose, selectedGroup, groupUsers}) => {
 
     const [type, setType] = useState("Work");
     const [page, setPage] = useState(0);
     const [addLoad, setAddLoad] = useState(false);
     const [users, setUsers] = useState([]);
     const [email, setEmail] = useState("");
+    const [selectedFile, setSelectedFile] = useState("");
     
     const {client, connected} = useContext(SocketContext); 
     const {user} = useContext(UserContext);
 
-    const [groupName, setGroupName] = useState("");
-    const [groupDescription, setGroupDescription] = useState(""); 
     
-    const [groupPhoto, setGroupPhoto] = useState("");
-    const [selectedFile, setSelectedFile] = useState(null);
-
-
-    const defaultOptions = {
-        loop: true,
-        autoplay: true,
-        animationData: animationData,
-        rendererSettings: {
-          preserveAspectRatio: "xMidYMid slice"
-        }
-      };
-
-      const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-          sendMsg();
-        }
-    };
-
     const handleFileChange = (event) => {
         setSelectedFile(event.target.files[0]);
     };
@@ -58,7 +38,10 @@ const CreateGroup = ({handleClose, showToast}) => {
                 const response = await Axios.post(`https://api.imgbb.com/1/upload?key=${process.env.REACT_APP_IMAGE_API}`, formData);
 
                 if (response.data.success) {
-                    setGroupPhoto(response.data.data.url);
+                    setNewDetails((prev) => ({
+                        ...prev, 
+                        groupPhoto: response.data.data.url
+                    }))
                     toast.success('Image uploaded successfully!');
                 } else {
                     toast.error('Uploading image failed');
@@ -70,35 +53,80 @@ const CreateGroup = ({handleClose, showToast}) => {
 
         handleFileUpload();
     }, [selectedFile]);
+ 
 
-    const createGroup = async () => {
-        var members = []; 
-        users.forEach((dataEl) => {
-           members.push(dataEl[2])
+    const handleInput = (e) => {
+        setNewDetails((prev) => ({
+            ...prev, 
+            [e.target.name]: e.target.value
+        }))
+    }
+
+    const [newDetails, setNewDetails] = useState({
+        groupName: "", 
+        groupDescription: "", 
+        groupType: "", 
+        groupPhoto: "",
+        newUsers: []
+    })
+    
+    useEffect(() => {
+        setNewDetails({
+            groupName: selectedGroup.groupName, 
+            groupDescription: selectedGroup.groupDescription, 
+            groupType: selectedGroup.groupType, 
+            groupPhoto: selectedGroup.groupPhoto,
+            newUsers:  []
+        })  
+    },[])
+
+
+    const defaultOptions = {
+        loop: true,
+        autoplay: true,
+        animationData: animationData,
+        rendererSettings: {
+          preserveAspectRatio: "xMidYMid slice"
+        }
+      };
+
+    const updateGroup = async () => {
+        var members = [];
+        newDetails.newUsers.forEach(dataEl => {
+            members.push(dataEl.userId);
         })
 
-        Axios.post(`${process.env.REACT_APP_SERVER_URI}/groups/createGroup`, {
-            groupName, 
-            groupDescription, 
-            groupType: type,
-            groupMembers: members, 
-            createdBy: user._id, 
-            groupPhoto
-        }).then(() => {
-            toast.success("Group Created Successfully!!");
-            setTimeout(() => {
-                handleClose();
-            }, 500) 
+        Axios.put(`${process.env.REACT_APP_SERVER_URI}/groups/updateGroup`, {
+            groupId: selectedGroup.groupId, 
+            groupName: newDetails.groupName,
+            groupType: newDetails.groupType, 
+            groupDescription: newDetails.groupDescription,
+            groupPhoto: newDetails.groupPhoto,
+            newUsers: members
+        }).then(response => {
+            if(response.data.status == 200){
+                toast.success(response.data.message);
+                setTimeout(() => {
+                    handleClose()
+                }, 500)
+            }
+            else {
+                toast.error(response.data.message);
+            }
         })
     }
 
-
     const removeUser = (item) => {
-        setUsers(l => l.filter(el => el[2] != item[2]));
+        let temp = newDetails.newUsers.filter(user => user.userEmail !== item.userEmail);
+
+        setNewDetails(prev => ({
+            ...prev, 
+            newUsers: temp
+        }));
     }
       
     const nextPage = () => {
-        if(groupName == "") {toast.error("Group Name Cannot be Empty!!"); return; }
+       
         setPage(1);
 
         client.subscribe(`/groups/${user._id}`, (msg) => {
@@ -113,10 +141,6 @@ const CreateGroup = ({handleClose, showToast}) => {
 
     }
 
-    useEffect(() => {
-        if(users.length == 0) setUsers([[user.imageUrl, user.userName, user.userEmail]]) 
-    },[user])
-
 
     const fetchUser = async (res) => {
         setEmail('')
@@ -124,21 +148,38 @@ const CreateGroup = ({handleClose, showToast}) => {
             toast.error(res.response.message)
         }
         else {
-            const newUser = JSON.parse(res.body) 
-            const newItem = [newUser.imageUrl, newUser.userName, newUser.userEmail] 
+            const newUser = JSON.parse(res.body) ;
+            const newItem = {
+                userId: newUser._id, 
+                userName: newUser.userName, 
+                userEmail: newUser.userEmail,
+                userPhoto: newUser.imageUrl
+            } 
             
-            setUsers((prevUsers) => {
-                const userExists = prevUsers.some(user =>
-                  user[2] === newItem[2]
-                );
-        
-                if (userExists) {
-                  toast.error("User Already Added!!");
-                  return prevUsers;
-                } if(!userExists) {
-                  return [...prevUsers, newItem];
+            console.log(newDetails)
+            
+
+            setNewDetails(prev => {
+                const userExists = prev.newUsers.some(user => user.userEmail === newItem.userEmail);
+                const alreadyUser = groupUsers.some(user => user.userEmail === newItem.userEmail);
+            
+                if (userExists || alreadyUser) {
+                    if (userExists) {
+                        toast.error("User is Added before!");
+                    }
+                    if (alreadyUser) {
+                        toast.error("User is already a part of group!");
+                    }
+                    return prev; // Return the previous state without changes
+                } else {
+                    console.log("Adding new user:", newItem);
+                    return {
+                        ...prev,
+                        newUsers: [...prev.newUsers, newItem]
+                    };
                 }
             });
+           
         }
     }
 
@@ -150,9 +191,11 @@ const CreateGroup = ({handleClose, showToast}) => {
         }
     }
 
-    const handleType = (item) => {
-        setType(item)
-    }
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+          sendMsg();
+        }
+    };
 
     const dropIn = { 
         hidden: {
@@ -190,12 +233,14 @@ const CreateGroup = ({handleClose, showToast}) => {
                  <CloseIcon onClick={handleClose}/> </div>
                 { page==0 ? <motion.div 
                 className="create-group-container">
-                    <h2 id="title">Create Group</h2> 
+                    <h2 id="title">Edit Group</h2> 
                     <div style={{
                         display: "flex",
                         paddingLeft: "10%",
                         height: "14%",
                     }}>
+                    <input type="file" style={{display: "none"}} id="fileInput"
+                     onChange={handleFileChange}/>
                     
                     <div
                      onClick={() => {document.getElementById("fileInput").click()}}
@@ -207,14 +252,13 @@ const CreateGroup = ({handleClose, showToast}) => {
                         backgroundColor: "#d8d8d8",
                         borderRadius: "50px",
                     }}>
-                        {groupPhoto == ""? 
+                        {newDetails.groupPhoto == ""? 
                             <CameraAltIcon scale="1.1" style={{color:"#959595", 
                         transform: "scale(2)", cursor: "pointer" }} />
                         : 
-                        <img src={groupPhoto} alt="upload" style={{ 
+                        <img src={newDetails.groupPhoto} alt="upload" style={{ 
                         fontSize: "small", cursor: "pointer", width: "100%", height: "100%", borderRadius: "50px", border: "1px solid #d8d8d8"}}/>
                         }
-                        
                     </div>
                     <div style={{
                         display: "grid",
@@ -226,12 +270,11 @@ const CreateGroup = ({handleClose, showToast}) => {
                     }}>
                     <label>Group Name</label>
                     <input type="text" className="input-2" placeholder="Thunder Buddies..."
-                       onChange={e => {setGroupName(e.target.value)}}
+                        value={newDetails.groupName} name="groupName"
+                       onChange={handleInput}
                     />
                     </div>
                     </div>
-                    <input type="file" style={{display: "none"}} id="fileInput"
-                     onChange={handleFileChange}/>
                     <div  style={{
                         display: "grid",
                         fontSize: "larger",
@@ -244,7 +287,8 @@ const CreateGroup = ({handleClose, showToast}) => {
                     }}>
                         <label> Group Description </label>
                         <textarea 
-                        onChange = {e => setGroupDescription(e.target.value)}
+                        value={newDetails.groupDescription}
+                        onChange = {handleInput} name="groupDescription"
                         style={{
                             border: "1px solid #d8d8d8", borderRadius: "5px", 
                             height: "13vh",
@@ -265,27 +309,36 @@ const CreateGroup = ({handleClose, showToast}) => {
                         <label> Group Type </label>
                         <div className="sliding-options">
                             <motion.button 
-                            className={type=="Work"?"group-type-selected":"group-type"}
-                            onClick={() => handleType("Work")}
+                            name="groupType"
+                            value="Work"
+                            className={
+                                newDetails.groupType=="Work"?"group-type-selected":"group-type"}
+                            onClick={handleInput}
                             >
                                 Work
                             </motion.button>
                             <motion.button
-                            className={type=="House"?"group-type-selected":"group-type"}
-                            onClick={() => handleType("House")}
+                            name="groupType"
+                            value="House"
+                            className={ newDetails.groupType=="House"?"group-type-selected":"group-type"}
+                            onClick={handleInput}
                             >
                                 House
                             </motion.button>
                             <motion.button
-                            className={type=="Travel"?"group-type-selected":"group-type"}
-                            onClick={() => handleType("Travel")}
+                            name="groupType"
+                            className={ newDetails.groupType=="Travel"?"group-type-selected":"group-type"}
+                            value="Travel"
+                            onClick={handleInput}
                             >
                                 Travel
                             </motion.button>
                             <motion.button
+                            name="groupType"
                             style={{border: "none"}}
-                            className={type=="Others"?"group-type-selected":"group-type"}
-                            onClick={() => handleType("Others")}
+                            className={ newDetails.groupType=="Others"?"group-type-selected":"group-type"}
+                            value="Others"
+                            onClick={handleInput}
                             >
                                 Others
                             </motion.button>
@@ -311,7 +364,7 @@ const CreateGroup = ({handleClose, showToast}) => {
                  //second page
                  <motion.div 
                 className="create-group-container">
-                    <h2 id="title">Create Group</h2>
+                    <h2 id="title">Edit Group</h2>
                     <div style={{
                         height: "62%", 
                         width: "100%",
@@ -336,14 +389,24 @@ const CreateGroup = ({handleClose, showToast}) => {
                         scrollbarWidth: "none"
                     }}>
 
-                        {users && users.map((dataEl, key) => {
+                        {groupUsers && groupUsers.map((dataEl, key) => {
                             return(
                                 <div className="add-users-group">
-                                    <img src = {dataEl[0]}  height={"40px"} width={"40px"} className="add-users-image" title={dataEl[2]}/>
-                                    <div className="add-users-text">{dataEl[2] == user.userEmail? "You" : dataEl[1]}</div>
-                                   {dataEl[2] != user.userEmail ? <div className="add-users-icon"><CloseIcon onClick = {() => {removeUser(dataEl)}}
-                                   /></div>: 
+                                    <img src = {dataEl.userPhoto}  height={"40px"} width={"40px"} className="add-users-image" title={dataEl.userEmail}/>
+                                    <div className="add-users-text">{dataEl.userName}</div>
+                                   {/* {dataEl.userEmail != user.userEmail ? <div className="add-users-icon"><CloseIcon onClick = {() => {removeUser(dataEl)}}
+                                   /></div>:  */
                                    <div className="add-users-icon"></div>}
+                                </div>
+                            )
+                        })}
+                        {newDetails.newUsers && newDetails.newUsers.map((dataEl, key) => {
+                            return(
+                                <div className="add-users-group">
+                                    <img src = {dataEl.userPhoto}  height={"40px"} width={"40px"} className="add-users-image" title={dataEl.userEmail}/>
+                                    <div className="add-users-text">{dataEl.userName}</div>
+                                    <div className="add-users-icon"><CloseIcon onClick = {() => {removeUser(dataEl)}}
+                                   /></div>
                                 </div>
                             )
                         })}
@@ -355,8 +418,7 @@ const CreateGroup = ({handleClose, showToast}) => {
                         marginTop: "1%",
                         marginLeft: "5%"
                     }}>
-                        <input type="email" className="input-5" value={email} placeholder="e.g. user@gmail.com"  
-                        onKeyDown={handleKeyDown}
+                        <input type="email" className="input-5" value={email} placeholder="e.g. user@gmail.com"  onKeyDown={handleKeyDown}
                         onChange={e => setEmail(e.target.value)} 
                         style={{
                             width: "70%", 
@@ -377,7 +439,7 @@ const CreateGroup = ({handleClose, showToast}) => {
                             backgroundColor: "white"
                         }}
                         onClick={sendMsg}
-                        onKeyDown={handleKeyDown}
+                        
                         initial={{scale: 1}}
                         whileHover={{scale: 1.1}}
                         whileTap={{scale: 0.9}}
@@ -407,9 +469,9 @@ const CreateGroup = ({handleClose, showToast}) => {
                  initial={{scale: 1}}
                  whileHover={{scale: 1.1}}
                  whileTap={{scale: 0.9}}
-                 onClick={createGroup}
+                 onClick={updateGroup}
                  >
-                    Create
+                    Update
                  </motion.button>
                     </div>
                  </motion.div>
@@ -421,4 +483,4 @@ const CreateGroup = ({handleClose, showToast}) => {
     )
 }
 
-export default CreateGroup; 
+export default EditGroup; 

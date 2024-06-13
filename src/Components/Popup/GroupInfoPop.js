@@ -138,8 +138,8 @@ const GroupInfoPop = ({handleClose, users, fetchUser, selectedGroup}) =>{
                                     cursor: "pointer", 
                                     minHeight: "3vh"
                                  }}
-                                 whileHover={{scale: 1.1}}
-                                 whileTap={{scale: 0.9}}
+                                 whileHover={{boxShadow: "inset 0px 0px 2px #c1c1c1"}}
+                                 whileTap={{boxShadow: "inset 0px 0px 4px #c1c1c1", scale: "0.95"}}
                                  >
                                     Send Remainder
                                  </motion.button>

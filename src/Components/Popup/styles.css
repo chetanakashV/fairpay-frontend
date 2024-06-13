@@ -223,7 +223,7 @@ input:focus{
     height: 17%;
     width: 25%;
     margin: 2%;
-    border-radius: 20px;
+    border-radius: 30px;
     display: flex;
     object-fit: cover;
     overflow: auto;
@@ -234,9 +234,9 @@ input:focus{
 
 .add-users-image{
     background-color: black;
-    border-radius: 50px;
+    border-radius: 30px;
     margin-right: 5%;
-    margin-left: 5%;
+    /* margin-left: 5%; */
     width: 27%;
     overflow: hidden;
 }
