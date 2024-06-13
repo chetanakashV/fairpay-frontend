@@ -115,13 +115,14 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                 totalAmount: paymentDetails.totalAmount,
                 transactionDate: paymentDetails.transactionDate,
                 participants: paymentDetails.participants,
-                groupId: selectedGroup.groupId
+                groupId: selectedGroup.groupId,
+                createdBy: user._id
             }).then(response => {
                 if (response.data.status === 200) {
                     toast.success(response.data.message);
                     setTimeout(() => {
                         handleClose();
-                    }, 1000);
+                    }, 500);
                 } else {
                     toast.error(response.data.message);
                 }

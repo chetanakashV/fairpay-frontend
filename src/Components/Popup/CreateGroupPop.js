@@ -46,10 +46,13 @@ const CreateGroup = ({handleClose, showToast}) => {
             groupName, 
             groupDescription, 
             groupType: type,
-            groupMembers: members 
+            groupMembers: members, 
+            createdBy: user._id
         }).then(() => {
-            toast.success("Group Created Successfully!!")
-            handleClose(); 
+            toast.success("Group Created Successfully!!");
+            setTimeout(() => {
+                handleClose();
+            }, 500) 
         })
     }
 

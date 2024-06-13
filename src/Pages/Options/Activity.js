@@ -5,7 +5,7 @@ import Title from '../../Components/Title';
 import './styles.css'
 
 const Activity = () => {
-    const [bar, setBar] = useState(false);
+    const [bar, setBar] = useState(false); 
     const handleBar = (state) => {setBar(state);}
 
     return(
