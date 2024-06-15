@@ -67,12 +67,12 @@ const SignIn = () => {
                      <div className='signin-details'>
                         <div className='signin-element'>
                             <label >Email address</label>
-                            <input type='text' className='signin-input' required
+                            <input type='email' className='signin-input' required
                              name='userMail' onChange={handleChange}/>
                         </div>
                         <div className='signin-element'>
                             <label >Password</label>
-                            <input type='password' className='signin-input' 
+                            <input type='password' className='signin-input' required
                              name='userPwd' onChange={handleChange}/>
                         </div>
                   <ReCAPTCHA

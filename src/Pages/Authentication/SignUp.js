@@ -38,6 +38,11 @@ const SignUp = () => {
 
     }
 
+    const showToast = (status, message) =>{
+        if(status == "success") toast.success(message);
+        else toast.error(message);
+    }
+
     useEffect(() => {
         if(!otpVerified) return; 
         hidePopUp();
@@ -83,7 +88,7 @@ const SignUp = () => {
               onExitComplete={() => null}
             >
 
-            {showPop && <Pop handleClose={hidePopUp} type="otp" mail = {userDetails.userEmail}  setOtpVerified={setOtpVerified}/>}
+            {showPop && <Pop handleClose={hidePopUp} type="otp" mail = {userDetails.userEmail}  setOtpVerified={setOtpVerified} showToast={showToast}/>}
             </AnimatePresence>
 
             <div className='signup-main-container'>
@@ -101,7 +106,7 @@ const SignUp = () => {
                             {toggle && <motion.div>
                               <div className='signup-element'>
                                 <label> Here's my email address:</label>
-                                <input type='text' name='userEmail' required className='inp' onChange={handleChange}/>
+                                <input type='email' name='userEmail' required className='inp' onChange={handleChange}/>
                               </div>
                               <div className='signup-element'>
                                 <label> and here's my password:</label>
