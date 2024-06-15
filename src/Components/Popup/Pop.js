@@ -4,7 +4,7 @@ import OtpPop from "./OtpPop";
 import { ToastContainer, toast } from "react-toastify";
 import './styles.css'
 
-const Pop = ({handleClose,mail, setOtpVerified, type }) => {
+const Pop = ({handleClose,mail, setOtpVerified, type, showToast}) => {
 
     const dropIn = { 
         hidden: {
@@ -41,7 +41,7 @@ const Pop = ({handleClose,mail, setOtpVerified, type }) => {
         exit="exit"
         drag
         >
-         <OtpPop handleClose={handleClose} setOtpVerified = {setOtpVerified} mail={mail} showSuccessToast = {showSuccessToast}/>
+         <OtpPop handleClose={handleClose} setOtpVerified = {setOtpVerified} mail={mail} showToast = {showToast}/>
         </motion.div>
         </Backdrop>
     )
