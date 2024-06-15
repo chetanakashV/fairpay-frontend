@@ -164,7 +164,13 @@ const Groups = () => {
 
     const addNewGroup = (res) => {
         const newGroup = JSON.parse(res);
-        const newItem = [newGroup.groupPhoto, newGroup.groupName, newGroup.groupDescription, newGroup._id];
+        const newItem = {
+            groupId: newGroup._id, 
+            groupName: newGroup.groupName, 
+            groupPhoto: newGroup.groupPhoto, 
+            groupDescription: newGroup.groupDescription
+        };
+
         console.table(newItem);
 
         setGroups((prevGroups) => {
@@ -266,20 +272,12 @@ const Groups = () => {
                 group.groupId === newGroup.groupId ? newGroup : group
             )
         );
+
+        if(selectedGroup.groupId == newItem._id){
+            setSelectedGroup(newGroup);
+        }
     };
     
-    // Use useEffect to monitor changes in the groups state
-    useEffect(() => {
-        if (isGroupSelected && selectedGroup && groups.length > 0) {
-            const updatedSelectedGroup = groups.find(group => group.groupId === selectedGroup.groupId);
-            if (updatedSelectedGroup) {
-                setSelectedGroup(updatedSelectedGroup);
-                console.log("selected group modified");
-            } else {
-                console.log("no selected group");
-            }
-        }
-    }, [groups, isGroupSelected, selectedGroup]);
     
 
     useEffect(() => {
@@ -422,7 +420,9 @@ const Groups = () => {
                                 <div className="group-element"
                                     style={selectedGroup.groupId == dataEl.groupId ? { backgroundColor: "#d8d8d8" } : { backgroundColor: "white" }}
                                     onClick={() => handleSelectGroup(dataEl)}>
-                                    <img src={dataEl.groupPhoto} className="group-item-image" />
+                                    <div className="group-item-image" >
+                                    <img src={dataEl.groupPhoto} style={{width: "100%", height: "100%"}} />
+                                    </div>
                                     <div className="group-item-container">
                                         <div className="group-item-name" title={dataEl.groupName}> {dataEl.groupName} </div>
                                         <div className="group-item-description" title={dataEl.groupDescription}> {dataEl.groupDescription} </div>
@@ -438,7 +438,7 @@ const Groups = () => {
                             <div className="group-details-container">
                                 <div className="group-details-heading">
                                     <div className="group-details-container1">
-                                        <img src={selectedGroup.groupPhoto} height="90%" width="90%" style={{ borderRadius: "50px" }} />
+                                        <img src={selectedGroup.groupPhoto} height="90%" width="90%" style={{ borderRadius: "50px", border: "1px solid #d8d8d8" }} />
                                     </div>
                                     <div className="group-details-container2">
                                         <div className="group-details-container2-1">
