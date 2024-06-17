@@ -130,7 +130,41 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
         }
     };
     
+    const distributeEqually = () => {
+        const totalAmount = paymentDetails.totalAmount;
+        const numUsers = users.length;
 
+        if (numUsers > 0) {
+            console.log(totalAmount, numUsers);
+            const equalAmount = parseFloat((totalAmount / numUsers).toFixed(2));
+            const remainder = totalAmount - (equalAmount * (numUsers - 1));
+            console.log(equalAmount, remainder);
+
+            let temp = paymentDetails.participants;
+    
+            // setPaymentDetails((prev) => ({
+            //     ...prev,
+            //     participants: prev.participants.map((participant, index) => ({
+            //         ...participant,
+            //         balance: index === numUsers - 1 ? remainder : equalAmount
+            //     }))
+            // }));
+
+            temp.map((element, index) => {
+                element.balance = index==numUsers-1? remainder: equalAmount;
+            })
+
+            setPaymentDetails((prev) => ({
+                ...prev, 
+                participants: temp
+            }))
+
+            
+            setTLoad(!tLoad)
+        }
+    }
+    
+      
 
     const handleNextPage = () => {
         if(!/\S/.test(paymentDetails.description)) toast.error("Description Cannot be empty!!")
@@ -487,7 +521,8 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                         alignContent: "center", 
                         border: "1px solid lightgray", 
                       }}
-                      onClick={() => {console.log(paymentDetails)}}
+                      onClick={distributeEqually}
+                     //go here
                       whileHover={{
                         boxShadow: "inset 0px 0px 3px #c1c1c1"
                       }}
@@ -534,6 +569,7 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                              ₹
                              <input type="number" placeholder="0.00" height="1%" width="75%"
                                onChange={(e) => {handleNumber(dataEl,e)}}
+                               value={paymentDetails.participants.find(participant => participant.userId === dataEl.userId)?.balance.toFixed(2) || ''}
                               style={{border: "none"}} />
                             </div>
 
@@ -541,6 +577,24 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                         )
                     })
                 }
+
+                {/* {paymentDetails.participants.map((participant, index) => (
+                    <div key={index} style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        width: "100%"
+                    }}>
+                        <div>{users.find(user => user.userId === participant.userId)?.userName}</div>
+                        <input
+                            type="number"
+                            className="input-3"
+                            value={participant.balance}
+                            onChange={(e) => handleNumber(participant, e)}
+                            name="balance"
+                        />
+                    </div>
+                ))} */}
                
                 </div>
 
