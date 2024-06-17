@@ -2,8 +2,10 @@ import React, {useContext, useEffect, useState} from 'react';
 import Backdrop from '../Backdrop';
 import {motion} from 'framer-motion'
 import { Close } from '@mui/icons-material';
-import { SocketContext } from '../../Helper/UserContext';
+import { SocketContext, UserContext } from '../../Helper/UserContext';
 import './styles.css'
+import Axios from 'axios';
+import { ToastContainer } from 'react-toastify';
 
 
  const dropIn = { 
@@ -27,12 +29,13 @@ import './styles.css'
      }
  }
 
-const GroupInfoPop = ({handleClose, users, fetchUser, selectedGroup}) =>{
+const GroupInfoPop = ({handleClose, users, fetchUser, showToast, selectedGroup}) =>{
 
     const {client, connected} = useContext(SocketContext);
     const [balances, setBalances] = useState([]);
     const [load, setLoad] = useState(true);
     const [sub, setSub] = useState(false);
+    const {user} = useContext(UserContext);
 
     const fetchBalances = (data) => {
         setBalances(JSON.parse(data));
@@ -71,6 +74,19 @@ const GroupInfoPop = ({handleClose, users, fetchUser, selectedGroup}) =>{
         return data; 
     }
 
+    const sendRemainder = (receiverId) => {
+        Axios.post(`${process.env.REACT_APP_SERVER_URI}/email/sendRemainder`, {
+            senderName: user.userName, 
+            receiverName: fetchUser(receiverId).userName, 
+            groupName: selectedGroup.groupName, 
+            receiverEmail: fetchUser(receiverId).userEmail
+        }).then(response => {
+            
+            if(response.data.status == 200) showToast("success", response.data.message);
+            else showToast("error", response.data.message);
+        })
+    }
+
     const getBalances = (userId) => {
        let data = []; 
        balances.forEach(element => {
@@ -84,6 +100,7 @@ const GroupInfoPop = ({handleClose, users, fetchUser, selectedGroup}) =>{
     return(
         <>
           <Backdrop onClick={handleClose}>
+          <ToastContainer/>
             <motion.div 
             className="group-info-pop"
             onClick={(e) => e.stopPropagation()}
@@ -109,7 +126,8 @@ const GroupInfoPop = ({handleClose, users, fetchUser, selectedGroup}) =>{
                                 <img src={fetchUser(element.userId).userPhoto} style={{width: "90%", height: "80%", backgroundColor: "black", borderRadius: "50px"}}/>
                            </div>
                            <div style={{minHeight: "100%", width: "28%", padding: "1%",alignItems: "center",overflow: "hidden"}}>
-                                <span style={{fontWeight: "400", fontSize: "medium"}}>{fetchUser(element.userId).userName}
+                                <span style={{fontWeight: "400", fontSize: "medium"}}>
+                                {fetchUser(element.userId).userName}
                                 <span style={{fontSize: "small", fontWeight: "300"}}>
                                 {getBalance(element.userId)>0? " gets ": " owes " }
                                 </span> 
@@ -138,6 +156,7 @@ const GroupInfoPop = ({handleClose, users, fetchUser, selectedGroup}) =>{
                                     cursor: "pointer", 
                                     minHeight: "3vh"
                                  }}
+                                 onClick={() => {sendRemainder(element.userId)}}
                                  whileHover={{boxShadow: "inset 0px 0px 2px #c1c1c1"}}
                                  whileTap={{boxShadow: "inset 0px 0px 4px #c1c1c1", scale: "0.95"}}
                                  >
