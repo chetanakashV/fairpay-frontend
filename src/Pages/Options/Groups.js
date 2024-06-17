@@ -227,6 +227,7 @@ const Groups = () => {
         
     }
 
+
     const setDeletedExpense = async (expenseId) => {
 
         setExpenses((prevExpenses) => prevExpenses.filter(expense => expense._id !== expenseId));
@@ -402,7 +403,8 @@ const Groups = () => {
                 onExitComplete={() => null}
             >
                 {showGroupInfoPop && <GroupInfoPop
-                    handleClose={handleGroupInfoClose}  users={groupParticipants} fetchUser = {getUserById} selectedGroup={selectedGroup}/>}
+                    handleClose={handleGroupInfoClose} showToast = {showToast} 
+                    users={groupParticipants} fetchUser = {getUserById} selectedGroup={selectedGroup}/>}
             </AnimatePresence>
 
             <div className={bar ? "group-container-closed" : "group-container"}>

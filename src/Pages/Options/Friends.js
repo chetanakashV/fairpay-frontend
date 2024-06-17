@@ -1,21 +1,101 @@
-import React, {useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Sidebar from '../../Components/Sidebar'
 import Profile from "../../Components/Profile";
 import Title from '../../Components/Title'
-import './styles.css'
 import {motion} from 'framer-motion'
 import { Done, Close } from "@mui/icons-material";
+import { SocketContext, UserContext } from "../../Helper/UserContext";
+import animationData from '../../Lotties/FriendsLoading.json'
+import Lottie from "react-lottie";
+import './styles.css' 
+
+const defaultOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: animationData,
+    rendererSettings: {
+      preserveAspectRatio: "xMidYMid slice"
+    }
+  };
 
 const Friends = () => {
     const [bar, setBar] = useState(false);
-    const [option, setOption] = useState("Friends")
-    const handleBar = (state) => {setBar(state);}
+    const [option, setOption] = useState("Friends");
+    const [sub, setSub] = useState(false);
+    
+    const [friendsLoad, setFriendsLoad] = useState(true);
+    
+    const {client, connected} = useContext(SocketContext);
+    const {user} = useContext(UserContext);
+    const [userLookup, setUserLookup] = useState({});
 
     const [people, setPeople] = useState({
-        Friends: [ {userName: "Pawan Kalyan", userPhoto: "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSBnDOhJoKGTLWetfGZajHJ5AbQKAprUQ4WsEpQtEs53NYC0OJD"}], 
-        Suggestions: [{userName: "Chiranjeevi ", userPhoto: "https://www.deccanchronicle.com/h-upload/2024/01/26/1072672-chirupadmavibhushan1.webp"}], 
-        Requests: [{userName: "Ram Charan", userPhoto: "https://in.bmscdn.com/iedb/artist/images/website/poster/large/ram-charan-teja-1046368-19-09-2017-02-37-43.jpg"}]
+        Friends: [], 
+        Suggestions: [], 
+        Requests: []
     })
+
+    const fetchData = (body) => {
+        const data = JSON.parse(body);
+        
+        data.users.forEach(element => {
+            setUserLookup((prev) => ({
+                ...prev, 
+                [element.userId]: element
+            }))
+        });
+        
+        setPeople({
+            Friends: data.friends, 
+            Suggestions: data.suggestions, 
+            Requests: data.requests
+        })
+
+        setFriendsLoad(false);
+    }
+
+    const handleRequest = (item, type) => {
+        if(client && connected){
+            const body = {
+                type: type, 
+                senderId: user._id, 
+                receiverId: item
+            }
+            client.send(`/app/friendRequest/${user._id}`, {}, JSON.stringify(body))
+        }
+    }
+    
+    const handleBar = (state) => {setBar(state);}
+    const getUser = (userId) => {
+        return userLookup[userId] || {userName: "not found" };
+    }
+
+    useEffect(() => {
+        let subscription; 
+        if(client && connected){
+            const timer = setTimeout(() => {
+                subscription = client.subscribe(`/friends/${user._id}`, (msg) => {
+                    const response = JSON.parse(msg.body);
+                    
+                    if(response.messageType == "userFriends") fetchData(response.body)
+                })
+                setSub(true)
+            }, 1000)
+
+            return () => {
+                clearTimeout(timer);
+                if(subscription)
+                    {subscription.unsubscribe();
+                    setSub(false);}
+            }
+        }
+    }, [client, connected])   
+    
+    useEffect(() => {
+        if(sub){
+            client.send(`/app/getFriends/${user._id}`, {}, "")
+        }
+    }, [sub])
 
     const handleOption = (e) => {
         setOption(e.currentTarget.getAttribute("data-value"));
@@ -26,7 +106,7 @@ const Friends = () => {
              <Sidebar option = "Friends" handleBar={handleBar}/>
              <Profile/> <Title title="Friends" bar={bar}/>
              <div className={bar? "friends-container-closed": "friends-container"}>
-                <div className="friends-list-container">
+               <div className="friends-list-container">
                     <div className="friends-options-bar">
                         <div className="fob-option" data-value = "Friends"
                          onClick={handleOption} style={option=="Friends"? {backgroundColor: "white"}: {}} id="end"> Friends</div>
@@ -36,16 +116,25 @@ const Friends = () => {
                         onClick={handleOption} style={option=="Requests"? {backgroundColor: "white"}: {}} id="end">  Requests</div>
                     </div>
                     <div className="friends-list">
-                            {people[option].map(person => (
+                            {friendsLoad ? 
+                                <div className="friends-list-container">
+                                <Lottie options={defaultOptions} height={300} width={300} /> </div>
+                            : people[option].map(person => (
                                  <div className="friends-list-element">
                                     <div className="fle-image">
-                                        <img src={person.userPhoto} style={{height: "100%", width: "100%"}}/>
+                                        <img src={option == "Suggestions"? getUser(person.userId).userPhoto : getUser(person).userPhoto} style={{height: "100%", width: "100%", backgroundColor: "black"}}/>
                                     </div>
-                                    <div className="fle-name"> {person.userName}</div>
+                                    <div className="fle-name"> {option == "Suggestions"? getUser(person.userId).userName : getUser(person).userName}</div>
                                     <div className="fle-options" id={option=="Suggestions"?"one": option=="Requests"? "two": "three"}>
                                         {
                                             option=="Suggestions"?
-                                                <motion.button
+                                                person.sent?
+                                                <div style={{
+                                                    fontSize: "medium", 
+                                                    cursor: "default", 
+                                                    color: "#959595"
+                                                }}> sent</div>
+                                                :<motion.button
                                                 style={{
                                                     background: "none", 
                                                     border: "2px solid #1cc29f", 
@@ -58,6 +147,8 @@ const Friends = () => {
                                                 }}
                                                 whileHover={{scale: 1.1}}
                                                 whileTap={{scale: 0.9}}
+                                                onClick={() => 
+                                                {handleRequest(person.userId, "sendRequest")}}
                                                 >
                                                     Add
                                                 </motion.button>
@@ -79,6 +170,7 @@ const Friends = () => {
                                                 }}
                                                 whileHover={{scale: 1.1}}
                                                 whileTap={{scale: 0.9}}
+                                                onClick={() => {handleRequest(person, "acceptRequest")}}
                                                 >
                                                     <Done/>
                                                 </motion.button>
@@ -97,6 +189,7 @@ const Friends = () => {
                                                 }}
                                                 whileHover={{scale: 1.1}}
                                                 whileTap={{scale: 0.9}}
+                                                onClick={() => {handleRequest(person, "rejectRequest")}}
                                                 >
                                                     <Close/>
                                                 </motion.button>

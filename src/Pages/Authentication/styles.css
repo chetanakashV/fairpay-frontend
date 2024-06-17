@@ -48,6 +48,10 @@
     margin-top: 2%;
 }
 
+.signin-element#otp{
+    background-color: red;
+}
+
 .signin-input{
     width: 90%;
 }
@@ -76,7 +80,6 @@
     font-size: larger;
     color: #1cc29f;
     font-weight: 400;
-    cursor: pointer; 
 }
 
 .signin-button:hover{

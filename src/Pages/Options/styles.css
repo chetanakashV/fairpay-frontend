@@ -993,7 +993,8 @@
     margin: 5% 1% 0 6%;
     border-radius: 5px;
     display: flex;
-    background-color: white;
+    justify-content: center;
+    /* background-color: white; */
     transition: width 0.5s, margin-left 0.5s;
 }
 
@@ -1001,25 +1002,66 @@
     height: 85%;
     width: 83%;
     margin: 5% 0 0 16%; 
-    background-color: white;
+    /* background-color: white; */
     border-radius: 5px;
     display: flex;
+    justify-content: center;
     transition: width 0.5s, margin-left 0.5s;
 }
 
 .activity-main-container{
     height: 100%;
-    width: 100%;
-    background-color: aqua;
+    width: 80%;
+    column-gap: 5%;
     display: flex;
-    padding: 1%;
 }
 
 .recent-activity-container{
     height: 100%;
-    width: 33%;
-    margin-right: 1%;
-    background-color: orange;
+    width: 65%;
+    background-color: white;
+    border-radius: 10px;
+    padding: 1%;
+    overflow: auto;
+    scrollbar-width: thin;
+}
+
+.activity-element{
+    height: 12%;
+    width: 100%;
+    /* background-color: aqua; */
+    margin-top: 1%;
+    margin-bottom: 1%;
+    border-radius: 10px;
+    display: flex;
+    border: 1px solid #d8d8d8;
+}
+
+.activity-element #name{
+    height: 100%;
+    width: 70%;
+    display: flex;
+    align-items: center;
+    padding-left: 5%;
+    justify-content: start;
+}
+
+.activity-element #date{
+    height: 100%;
+    width: 30%;
+    display: flex;
+    justify-content: end;
+    padding-right: 5%;
+    align-items: center;
+    font-size: small;
+    color: #959595;
+}
+
+.buy-coffee{
+    height: 100%;
+    width: 30%;
+    background-color: white;
+    border-radius: 10px;
 }
 
 /* ends */
