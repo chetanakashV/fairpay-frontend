@@ -35,6 +35,11 @@ const Profile = () => {
 
     const handleToggle = () => {setMenu(!menu)}
 
+    const handleLogout = () => {
+        sessionStorage.setItem("logIn", false)
+        navigate('/login')
+    }
+
     useEffect(() => {
         loadUser();
     }, [])
@@ -71,7 +76,7 @@ const Profile = () => {
                 <div className='profile-option' onClick={handleSupport}>
                  Contact Support
                  </div>
-                <div className='profile-option' onClick={() => handleNavigate("login")}> Logout</div>
+                <div className='profile-option' onClick={handleLogout}> Logout</div>
             </div>}
         </div>
     )
