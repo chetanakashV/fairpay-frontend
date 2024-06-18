@@ -8,17 +8,19 @@
 
 /* Sign In */
 .signin-main-container{
-    height: 90%;
+    min-height: 90%;
     width: 100%;
     display: grid; 
-    
+    justify-items: center;
+    margin-top: 1%;
 }
 
 .signin-container{
-    height: 80%;
-    width: 35%;
+    min-height: 80%;
+    min-width: 40%;
     border-radius: 15px;
-    margin: auto;
+    /* margin: auto; */
+
     background-color: white;
     box-shadow:1px 1px 1px 1px lightgray;
     overflow: hidden;
