@@ -4,7 +4,7 @@ import {UserContext, LogInContext} from '../Helper/UserContext'
 import animationData from '../Lotties/ProfileLoading.json'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import {support} from '../Assets/Templates'
+import {support, feedback} from '../Assets/Templates'
 import './styles.css'
 
 const Profile = () => {
@@ -22,13 +22,23 @@ const Profile = () => {
 
     const handleNavigate = (path) => {
         navigate(`/${path}`)
-    }
+    } 
 
     const handleSupport = () => {
         const email = process.env.REACT_APP_EMAIL;
         const subject = "Request For Support"
         const body = support; 
-        const mailtoLink = `mailto:${email}`;
+        const mailtoLink = `mailto:${email}?subject="fairPaySupport&body=${
+        encodeURIComponent(support)}"`;
+
+        window.location.href = mailtoLink;
+    }
+
+    const handleFeedback = () => {
+        const email = process.env.REACT_APP_EMAIL;
+        const subject = "Website Feedback"
+        const body = support; 
+        const mailtoLink = `mailto:${email}?subject="fairPaySupport&body=${encodeURIComponent(feedback)}"`;
 
         window.location.href = mailtoLink;
     }
@@ -76,6 +86,7 @@ const Profile = () => {
                 <div className='profile-option' onClick={handleSupport}>
                  Contact Support
                  </div>
+                <div className='profile-option' onClick={handleFeedback}> Provide Feedback</div>
                 <div className='profile-option' onClick={handleLogout}> Logout</div>
             </div>}
         </div>

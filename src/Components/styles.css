@@ -275,6 +275,7 @@
   left: -30%;
   border-radius: 8px;
   width: 130%;
+  height: 80%;
   border: 1px solid lightgray; 
 }
 
@@ -283,6 +284,9 @@
   text-align:justify;
   cursor: pointer;
   padding-left: 10px;
+  height: 25%;
+  display: flex;
+  align-items: center;
 }
 
 .profile-option:hover{
