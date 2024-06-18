@@ -28,17 +28,17 @@ const Profile = () => {
         const email = process.env.REACT_APP_EMAIL;
         const subject = "Request For Support"
         const body = support; 
-        const mailtoLink = `mailto:${email}?subject="fairPaySupport&body=${
-        encodeURIComponent(support)}"`;
+        const mailtoLink = `mailto:${email}?subject=${subject}&body=${
+        encodeURIComponent(body)}"`;
 
         window.location.href = mailtoLink;
     }
 
     const handleFeedback = () => {
-        const email = process.env.REACT_APP_EMAIL;
+        const email = process.env.REACT_APP_FEEDBACK_EMAIL;
         const subject = "Website Feedback"
-        const body = support; 
-        const mailtoLink = `mailto:${email}?subject="fairPaySupport&body=${encodeURIComponent(feedback)}"`;
+        const body = feedback; 
+        const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}"`;
 
         window.location.href = mailtoLink;
     }
