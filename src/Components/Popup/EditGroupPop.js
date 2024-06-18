@@ -102,6 +102,7 @@ const EditGroup = ({handleClose, selectedGroup, groupUsers}) => {
             groupType: newDetails.groupType, 
             groupDescription: newDetails.groupDescription,
             groupPhoto: newDetails.groupPhoto,
+            updatedBy: user._id,
             newUsers: members
         }).then(response => {
             if(response.data.status == 200){
