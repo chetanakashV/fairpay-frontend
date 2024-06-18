@@ -13,11 +13,10 @@ import animationData2 from '../../Lotties/GroupsLoading.json';
 
 import CreateGroup from '../../Components/Popup/CreateGroupPop';
 import CreateExpensePop from "../../Components/Popup/CreateExpensePop";
-import GroupInfoPop from "../../Components/Popup/GroupInfoPop";
-
+import GroupInfoPop from "../../Components/Popup/GroupInfoPop"
 import Axios from "axios";
 
-import { Add, MoreVert, Paid, Info, Delete, Analytics, Close, Edit, Celebration } from '@mui/icons-material';
+import { Add, MoreVert, Paid, Info,  Close, Edit, FileOpen } from '@mui/icons-material';
 import './styles.css';
 import EditGroup from "../../Components/Popup/EditGroupPop";
 
@@ -90,9 +89,99 @@ const Groups = () => {
             Axios.post(`${process.env.REACT_APP_SERVER_URI}/expenses/deleteExpense`,
             {expenseId: item._id}).then((response) => {
         })
-     
-    
+    }
+
+    const calculateUserBalances = () => {
+    const userBalances = {};
+
+    groupParticipants.forEach(participant => {
+        userBalances[participant.userId] = 0;
+    });
+
+    expenses.forEach(expense => {
+        expense.participants.forEach(participant => {
+            userBalances[participant.userId] += participant.balance;
+        });
+    });
+
+    return userBalances;
+};
+
+
+const handleExportCSV = () => {
+    if (!selectedGroup || !expenses || !users || users.length === 0) {
+        return; // Return if necessary data is not available
+    }
+
+    const groupName = selectedGroup.groupName.replace(/[^a-zA-Z0-9]/g, '_'); // Replace non-alphanumeric characters in group name
+    const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+
+    const fileName = `${groupName}_${today}.csv`;
+    const csvContent = generateCSV(expenses);
+
+    downloadCSV(csvContent, fileName);
 }
+
+const generateCSV = (expenses) => {
+    const headers = [
+        "Date",
+        "Expense Description",
+        ...users.map(user => getUserById(user.userId).userName), // Participants
+        "Total Amount"
+    ];
+
+    const rows = expenses.map(expense => {
+        const row = [
+            getISO(expense.transactionDate),
+            expense.description, 
+            ...users.map(user => {
+                const participant = expense.participants.find(p => p.userId === user.userId);
+                return participant ? participant.balance.toFixed(2) : "0.00";
+            }),
+            expense.totalAmount.toFixed(2) 
+        ];
+        return row.join(",");
+    });
+
+    // Calculate totals
+    const userBalancesTotal = {};
+    users.forEach(user => {
+        const userId = user.userId;
+        const totalBalance = expenses.reduce((total, expense) => {
+            const participant = expense.participants.find(p => p.userId === userId);
+            return total + (participant ? participant.balance : 0);
+        }, 0);
+        userBalancesTotal[userId] = totalBalance.toFixed(2);
+    });
+
+    const totalAmountTotal = expenses.reduce((total, expense) => total + expense.totalAmount, 0).toFixed(2);
+
+    // Add row gap and totals
+    rows.push(""); // One row gap
+
+    const userTotalsRow = ["", "Total Balances"];
+    users.forEach(user => {
+        const userId = user.userId;
+        userTotalsRow.push(userBalancesTotal[userId]);
+    });
+    userTotalsRow.push(totalAmountTotal);
+
+    rows.push(userTotalsRow.join(","));
+
+    const csv = [headers.join(","), ...rows].join("\n");
+
+    return csv;
+}
+
+const downloadCSV = (csvContent, filename) => {
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(link.href);
+}
+
 
     const handleSelectExpense = (id) => {
         if(selectedExpense == id) setSelectedExpense("");
@@ -461,13 +550,17 @@ const Groups = () => {
                                                 <div className="more-verti-option" onClick={() => {
                                                     setGroupMenuOptions(false);
                                                     setShowExpensePop(true);
-                                                }}> <Paid /> Add Expense</div>
-                                                <div className="more-verti-option" onClick={() => {setShowEditGroupPop(true);}}> <Edit/>  Edit Group</div>
+                                                }}> <Paid style={{fontSize: "large", marginRight: "5%"}}/> Add Expense</div>
+                                                <div className="more-verti-option" onClick={() => {setShowEditGroupPop(true);}}> <Edit style={{fontSize: "large", marginRight: "5%"}}/>
+                                                  Edit Group</div>
+                                                <div className="more-verti-option" onClick={handleExportCSV}> <FileOpen 
+                                                style={{fontSize: "large", marginRight: "5%"}}/>
+                                                  Export as CSV</div>
                                                 <div className="more-verti-option" 
                                                 onClick={() => {
                                                      setShowGroupInfoPop(true);
                                                      setGroupMenuOptions(false);
-                                                     }}> <Info /> Group Balances</div>
+                                                     }}> <Info style={{fontSize: "large", marginRight: "5%"}}/> Group Balances</div>
                                               
                                             </div>}
                                         </div>
