@@ -8,6 +8,7 @@ import Groups from './Pages/Options/Groups'
 import Friends from './Pages/Options/Friends'
 import Activity from './Pages/Options/Activity'
 import Settings from './Pages/Options/Settings'
+import About from './Pages/About'
 import UserProvider from './Helper/UserContext';
 import Account from './Pages/Options/Account';
 import Footer from './Components/Footer';
@@ -24,7 +25,8 @@ function App() {
       <Router>
           <Routes>
               <Route exact path = "/" element = {<Landing/>}/>
-              
+
+              <Route exact path = "/about" element = {<About/>}/>
               <Route exact path = "/login" element = {<SignIn/>} />
               <Route exact path = "/signup" element = {<SignUp/>}/> 
 
