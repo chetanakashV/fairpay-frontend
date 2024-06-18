@@ -86,13 +86,12 @@ const Activity = () => {
                       {activities.map(dataEl => {
                         return(
                             <div className="activity-element" >
-                                <div id="name" >{dataEl.name}</div>
+                                <div id="name" >{dataEl.name} </div>
                                 <div id="date"> {formatDate(dataEl.date)} </div>
                             </div>
                         )
                       })}
                    </div>}
-                    <div className="buy-coffee"></div>
                 </div>
              </div>
         </div>
