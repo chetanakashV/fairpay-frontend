@@ -9,40 +9,46 @@ import { motion } from "framer-motion";
 const Navbar = (props) => {
     const navigate = useNavigate(); 
 
-    const handleSignUp = () => {
-        navigate('/signup')
-    }
-
-    const handleLogo = () => {
-        navigate("/")
-    }
-
-    const handleSignIn = () => {
-        navigate("/login")
+    const handleNavigate = (e) => {
+        navigate(`/${e.target.name}`)
     }
 
     return(
         <div className='navbar-container'>
-            <img src = {appLogo}  width="65%"  className='appLogo'  alt = 'applogo' onClick={handleLogo}/>
+            <img src = {appLogo}  width="65%"  className='appLogo' name=''  alt = 'applogo' onClick={handleNavigate}/>
             <div className='button-container'>
+                {/* <motion.button 
+                    className='button1'
+                    name='about'
+                    initial = {props.isSelected == "About"? { scale: 1.1,
+                    backgroundColor: 'white' }: {scale: 1}}
+                    whileHover={{scale: 1.2}}
+                    whileTap={{scale: 0.9}}
+                    onClick={handleNavigate}
+                >
+                    About
+                </motion.button> */}
+
                 <motion.button 
                     className='button1'
+                    name='signup'
                     initial = {props.isSelected == "Register"? { scale: 1.1,
                     backgroundColor: 'white' }: {scale: 1}}
                     whileHover={{scale: 1.2}}
                     whileTap={{scale: 0.9}}
-                    onClick={handleSignUp}
+                    onClick={handleNavigate}
                 >
                     Sign Up
                 </motion.button>
 
                 <motion.button 
                     className='button1'
+                    name='login'
                     initial = {props.isSelected == "Login"? { scale: 1.1, 
                     backgroundColor: "white" }: {scale: 1}}
                     whileHover={{scale: 1.2}}
                     whileTap={{scale: 0.9}}
-                    onClick={handleSignIn}
+                    onClick={handleNavigate}
                 >
                      Log In
                 </motion.button>
