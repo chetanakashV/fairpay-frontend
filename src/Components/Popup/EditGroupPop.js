@@ -454,6 +454,7 @@ const EditGroup = ({handleClose, selectedGroup, groupUsers}) => {
                                     style={{
                                         marginBottom: "10%",
                                     }}
+                                    isClickToPauseDisabled={true}
                                 />:
                                 <>Add</>
                             }

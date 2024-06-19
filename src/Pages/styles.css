@@ -27,6 +27,10 @@
     width: 60%;
     display: flex;
     align-items: center;
+
+    @media only screen and (max-width: 950px){
+        display: none;
+    }
 }
 
 .landing-button-container{
@@ -44,26 +48,41 @@
     justify-content: center;
     display: flexbox;
     padding: 5%;
+    @media only screen and (max-width: 950px){
+        width: 100%;
+    }
 }
 
 .landing-text #main-text{
     /* background-color: red; */
     font-size: xxx-large;
     font-weight: 500;
-    height: 20%;
+    height: fit-content;
     width: 90%;
     color: #373b3f;
     margin-bottom: 10%;
+    overflow: hidden;
+
+    @media only screen and (max-width: 1350px) {
+        font-size: xx-large;
+    }
+
+    
 }
 
 .landing-text #desc-text{
     /* background-color: red; */
     font-size: large;
     font-weight: 400;
-    height: 20%;
+    height: fit-content;
     width: 70%;
     color: #373b3f;
     padding-left: 3%;
+    overflow: hidden;
+
+    @media only screen and (max-width: 1350px) {
+        font-size: medium;
+    }
 }
 
 /* ends */

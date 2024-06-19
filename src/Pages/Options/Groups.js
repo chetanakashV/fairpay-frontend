@@ -499,20 +499,20 @@ const downloadCSV = (csvContent, filename) => {
             <div className={bar ? "group-container-closed" : "group-container"}>
                 <div className="group-name-container">
                     <div className="group-been-in">
-                        Groups you've been in
+                        <div style={{width: "80%"}}>Groups you've been in</div>
                         {!showPop && !showExpensePop && !showEditGroupPop && !showGroupInfoPop && <Add className="create-group-icon" onClick={() => setShowPop(true)} />}
                     </div>
                     <div className="group-list-container">
                         {load ?
-                            <div>
-                                <Lottie options={defaultOptions} height={300} width={300} />
+                            <div style={{width: "100%", height: "100%", display: "flex", justifyContent: "center"}}>
+                                <Lottie options={defaultOptions} isClickToPauseDisabled={true} height={300} width={300} />
                             </div> :
                             groups.map((dataEl) => (
                                 <div className="group-element"
                                     style={selectedGroup.groupId == dataEl.groupId ? { backgroundColor: "#d8d8d8" } : { backgroundColor: "white" }}
                                     onClick={() => handleSelectGroup(dataEl)}>
                                     <div className="group-item-image" >
-                                    <img src={dataEl.groupPhoto} style={{width: "100%", height: "100%"}} />
+                                    <img src={dataEl.groupPhoto} style={{width: "100%", height: "100%", border: "1px solid #d8d8d8", borderRadius: "50px"}} />
                                     </div>
                                     <div className="group-item-container">
                                         <div className="group-item-name" title={dataEl.groupName}> {dataEl.groupName} </div>
@@ -651,7 +651,7 @@ const downloadCSV = (csvContent, filename) => {
                         </div> :
                         <div className="group-main-container"
                             style={{ display: "grid", alignItems: "start", justifyContent: "center" }}>
-                            <Lottie options={defaultOptions2} height={500} width={500} />
+                            <Lottie isClickToPauseDisabled={true} options={defaultOptions2} height={500} width={500} />
                         </div> :
                     <div className="group-main-container"></div>
                 }

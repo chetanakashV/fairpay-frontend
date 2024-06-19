@@ -137,6 +137,7 @@ const Landing = () => {
                   options={defaultOptions}
                   height={500}
                   width={500}
+                  isClickToPauseDisabled={true}
                 />
             </div>
             </div>

@@ -237,7 +237,7 @@ const Account = () => {
                     </form>
                     <div className='invite-container'>
                     <div className='ic-lottie-container'>
-                    <Lottie options={defaultOptions} height={200} width={200} />
+                    <Lottie options={defaultOptions} isClickToPauseDisabled={true} height={200} width={200} />
                     </div>
                     <input type='text' style={{width: "90%", marginLeft: "5%", fontSize: "medium", height: "7%", paddingLeft: "2%"}} placeholder="example@gmail.com"/>
                     <div className='button-container-3'>

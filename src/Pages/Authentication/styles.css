@@ -23,6 +23,17 @@
     background-color: white;
     box-shadow:1px 1px 1px 1px lightgray;
     overflow: hidden;
+
+    @media screen and (max-width: 768px) {
+        width: 75%;
+        height: 95%;
+    }
+
+    @media screen and (max-width: 1370px) {
+        width: 60%;
+        height: 95%;
+
+    }
 }
 
 .signin-heading{
@@ -32,6 +43,7 @@
     width: 100%;
     font-size: xx-large;
     font-weight: 100;
+
 }
 
 .signin-details{
@@ -47,6 +59,11 @@
     width: 100%;
     padding-left: 6.5%;
     margin-top: 2%;
+
+    /* @media screen and (max-width: 768px) {
+        font-size: large;
+    } */
+
 }
 
 .signin-element#otp{
@@ -104,6 +121,8 @@
     width: 60%;
     margin: auto;
     display: flex;
+
+
 }
 
 .signup-image-container{
@@ -116,7 +135,7 @@
     cursor: pointer;
 }
 
-@media screen and ( max-width: 750px){
+@media screen and ( max-width: 768px){
     .signup-image-container{
         display: none;
     }
@@ -158,6 +177,11 @@
     height: 7vh;
     margin-top: 5%;
     margin-left: 18%;
+
+    @media screen and (max-width: 768px) {
+        width: 45%;
+        margin-top: 3%;
+    }
 }
 
 /* ends */

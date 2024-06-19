@@ -22,6 +22,11 @@
     border-radius: 5px;
     display: flex;
     transition: width 0.5s, margin-left 0.5s;
+    @media screen and (min-height: 750px) {
+        height: 80%;
+        margin-top: 8%;
+        margin-left: 8%;
+    }
 }
 
 .group-container-closed{
@@ -31,7 +36,13 @@
     border-radius: 5px;
     display: flex;
     transition: width 0.5s, margin-left 0.5s;
+    @media screen and (min-height: 750px) {
+        height: 80%;
+        margin-top: 8%;
+    }
 }
+
+
 
 .group-expense-element-container{
     width: 100%;
@@ -227,6 +238,15 @@
     text-align: left; 
     padding-bottom: 2%;
     padding-left: 10%;
+    column-gap: 1%;
+    padding-right: 5%;
+
+    @media screen and (min-height: 750px) {
+        font-size: medium;
+        padding-left: 2%;
+        overflow: hidden;
+        margin-bottom: 1%;
+    }
 }
 
 .group-list-container{
@@ -275,6 +295,11 @@
  overflow: hidden;
  cursor: pointer; 
  margin-bottom: 1%;
+
+ @media screen and (min-height: 750px) {
+    height: 9%;
+}
+ 
 }
 
 .group-element:hover{
@@ -285,13 +310,13 @@
     width: 18%;
     border-radius: 50px;
     overflow: hidden;
-    margin: 3%;
-    border: 1px solid #d8d8d8; 
+    padding: 3%;
 }
 
 .group-item-container{
-    width: 100%;
+    width: 80%;
     height: 100%;
+    
 }
 
 .create-group-icon{
@@ -388,6 +413,10 @@
     padding-top: 1%;
     overflow: hidden;
     display: flex;
+
+    @media screen and (min-height: 750px) {
+        height: 12%;
+    }
 }
 
 .group-details-container1{
@@ -621,6 +650,13 @@
     display: flex;
     overflow: hidden;
     padding: 1%;
+
+    @media screen and (min-height: 750px) {
+        height: 80%;
+        margin-top: 3%;
+        width: 97%;
+        margin-left: 2%;
+    }
 }
 
 .picture-settings{
@@ -628,6 +664,7 @@
     width: 30%;
     border-right: 1px solid #d8d8d8;
     padding: 0.3%;
+
 }
 
 
@@ -942,6 +979,11 @@
     justify-content: center;
     /* overflow: hidden;  */
     border-bottom: 1px solid #d8d8d8;
+
+    @media screen and (min-height: 750px) {
+        height: 25%;
+        
+    }
 }
 
 .dashboard-group-element-image{
@@ -961,7 +1003,7 @@
     font-size: large;
     padding-left: 2%;
     padding-right: 2%;
-
+    margin-right: 1%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1143,6 +1185,11 @@
     border-radius: 5px;
     display: flex;
     transition: width 0.5s, margin-left 0.5s; 
+
+    @media screen and (min-height: 750px) {
+        height: 83%;
+        margin-top: 7%;
+    }
 }
 
 .friends-container-closed{
@@ -1152,6 +1199,12 @@
     border-radius: 5px;
     display: flex;
     transition: width 0.5s, margin-left 0.5s;
+
+    @media screen and (min-height: 750px) {
+        height: 83%;
+        margin-top: 7%;
+        margin-left: 15%;
+    }
 }
 
 .friends-list-container{
@@ -1169,7 +1222,7 @@
     width: 73%;
     border-radius: 5px;
     background-color: white;
-    display: flex;
+    padding: 2%;
 }
 
 .friends-options-bar{
@@ -1214,6 +1267,10 @@
     /* justify-content: center; */
     padding: 2%;
     border-radius: 5px;
+
+    @media screen and (min-height: 750px) {
+        height: 8%;
+    }
 }
 
 .friends-list-element:hover {
@@ -1249,5 +1306,120 @@
     align-items: center;
 }
 
+.fdc-head{
+    height: 14%;
+    width: 100%;
+    border-bottom: 1px solid #959595;
+    display: flex;
+    align-items: center;
+    padding-left: 2%;
+    padding-bottom: 1%;
+
+    @media screen and (min-height: 750px) {
+        height: 12%;
+    }
+}
+
+.fdc-head #image{
+    height: 100%;
+    width: 8%;
+    background-color: black;
+    border-radius: 50px;
+    overflow: hidden;
+
+    @media screen and (min-height: 750px) {
+        height: 90%;
+        display: flex;
+        align-items: start;
+    }
+
+}
+
+.fdc-head #name{
+    height: 100%;
+    width: 60%;
+    padding-left: 1%;
+}
+
+.fdc-head #name #title{
+    font-size: x-large;
+}
+
+.fdc-head #name #desc{
+    font-size: medium;
+}
+
+.fdc-body{
+    height: 86%;
+    width: 100%;
+    margin-top: 1%;
+    /* background-color: orange; */
+    overflow: auto;
+    scrollbar-width: none;
+}
+
+.fdc-group-element{
+    height: 15%;
+    width: 90%;
+    margin-left: 5%;
+    /* background-color: aqua; */
+    margin-top: 1%;
+    margin-bottom: 1%;
+    padding-left: 1%;
+    padding-top: 0.5%;
+    padding-bottom: 0.5%;
+    display: flex;
+    border-radius: 10px;
+    border: 1px solid #959595;
+    padding: 1%;
+
+    @media screen and (min-height: 750px) {
+        height: 12%;
+    }
+}
+
+.fdc-group-element #image{
+    height: 95%;
+    width: 7%;
+    margin-right: 3%;
+    background-color: black;
+    border-radius: 50px;
+    overflow: hidden;
+    border: 1px solid #d8d8d8;
+}
+
+.fdc-group-element #name{
+    height: 95%;
+    width: 50%;
+    /* background-color: orange; */
+    font-size: larger;
+    display: flex;
+    justify-content: start; 
+    align-items: center;
+}
+
+.fdc-group-element #expense{
+    height: 95%;
+    width: 40%;
+}
+
+.fdc-group-element #expense #name{
+    height: 25%;
+    width: 100%;
+    font-size: smaller;
+    font-weight: 300;
+    padding-right: 15%;
+    justify-content: end;
+    color: #959595;
+}
+
+.fdc-group-element #expense #amount{
+    height: 75%;
+    width: 100%;
+    font-size: x-large;
+    display: flex;
+    justify-content: end;
+    padding-right: 10%;
+}
 
 /* ends */

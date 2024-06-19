@@ -1,8 +1,8 @@
 import React from 'react'
-import './styles.css'
 import appLogo from '../Assets/Images/logo1.png'
 import { useNavigate } from 'react-router-dom'
 import { motion } from "framer-motion";
+import './styles.css'
 
 
 

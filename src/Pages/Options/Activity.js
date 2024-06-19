@@ -80,7 +80,7 @@ const Activity = () => {
                 <div className="activity-main-container">
                   {load?
                   <div className="recent-activity-container" style={{display: "flex", justifyContent: "center", alignItems: "start", paddingTop: "10%"}}>
-                  <Lottie options={defaultOptions} height={300} width={300} />
+                  <Lottie options={defaultOptions} isClickToPauseDisabled={true} height={300} width={300} />
                   </div>:
                    <div className="recent-activity-container">
                       {activities.map(dataEl => {

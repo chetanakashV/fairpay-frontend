@@ -81,14 +81,18 @@ const CreateGroup = ({handleClose, showToast}) => {
             groupName, 
             groupDescription, 
             groupType: type,
-            groupMembers: members, 
+             groupMembers: members, 
             createdBy: user._id, 
             groupPhoto
-        }).then(() => {
-            toast.success("Group Created Successfully!!");
-            setTimeout(() => {
-                handleClose();
-            }, 500) 
+        }).then((response) => {
+            if(response.data.status == 200){
+             toast.success("Group Created Successfully!!");
+             handleClose();
+            }
+            else{
+             toast.error(response.data.message);
+            }
+            
         })
     }
 
@@ -388,6 +392,7 @@ const CreateGroup = ({handleClose, showToast}) => {
                                     options={defaultOptions}
                                     height={20}
                                     width={20}
+                                    isClickToPauseDisabled={true}
                                     style={{
                                         marginBottom: "10%",
                                     }}
