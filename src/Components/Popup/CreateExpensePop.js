@@ -3,9 +3,9 @@ import { motion } from "framer-motion";
 import { ToastContainer, toast } from "react-toastify";
 import { SocketContext, UserContext } from "../../Helper/UserContext";
 import {useContext, useEffect, useState} from 'react'; 
-import './styles.css'
 import { Close } from "@mui/icons-material";
 import  Axios  from "axios";
+import './styles.css'
 
 
 const CreateExpensePop = ({handleClose, selectedGroup}) => {

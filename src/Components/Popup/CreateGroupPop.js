@@ -14,7 +14,10 @@ const CreateGroup = ({handleClose, showToast}) => {
 
     const [type, setType] = useState("Work");
     const [page, setPage] = useState(0);
+
     const [addLoad, setAddLoad] = useState(false);
+    const [createLoad, setCreateLoad] = useState(false);
+
     const [users, setUsers] = useState([]);
     const [email, setEmail] = useState("");
     
@@ -76,7 +79,7 @@ const CreateGroup = ({handleClose, showToast}) => {
         users.forEach((dataEl) => {
            members.push(dataEl[2])
         })
-
+        setCreateLoad(true);
         Axios.post(`${process.env.REACT_APP_SERVER_URI}/groups/createGroup`, {
             groupName, 
             groupDescription, 
@@ -92,7 +95,7 @@ const CreateGroup = ({handleClose, showToast}) => {
             else{
              toast.error(response.data.message);
             }
-            
+            setCreateLoad(false);
         })
     }
 
@@ -414,7 +417,19 @@ const CreateGroup = ({handleClose, showToast}) => {
                  whileTap={{scale: 0.9}}
                  onClick={createGroup}
                  >
-                    Create
+                     {
+                                createLoad? 
+                                <Lottie
+                                    options={defaultOptions}
+                                    height={20}
+                                    width={20}
+                                    isClickToPauseDisabled={true}
+                                    style={{
+                                        marginBottom: "10%",
+                                    }}
+                                />:
+                                <>Create</>
+                            }
                  </motion.button>
                     </div>
                  </motion.div>

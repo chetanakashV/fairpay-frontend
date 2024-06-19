@@ -14,7 +14,10 @@ const EditGroup = ({handleClose, selectedGroup, groupUsers}) => {
 
     const [type, setType] = useState("Work");
     const [page, setPage] = useState(0);
+
     const [addLoad, setAddLoad] = useState(false);
+    const [editLoad, setEditLoad] = useState(false);
+
     const [users, setUsers] = useState([]);
     const [email, setEmail] = useState("");
     const [selectedFile, setSelectedFile] = useState("");
@@ -95,7 +98,7 @@ const EditGroup = ({handleClose, selectedGroup, groupUsers}) => {
         newDetails.newUsers.forEach(dataEl => {
             members.push(dataEl.userId);
         })
-
+        setEditLoad(true);
         Axios.put(`${process.env.REACT_APP_SERVER_URI}/groups/updateGroup`, {
             groupId: selectedGroup.groupId, 
             groupName: newDetails.groupName,
@@ -114,6 +117,7 @@ const EditGroup = ({handleClose, selectedGroup, groupUsers}) => {
             else {
                 toast.error(response.data.message);
             }
+            setEditLoad(false);
         })
     }
 
@@ -473,7 +477,19 @@ const EditGroup = ({handleClose, selectedGroup, groupUsers}) => {
                  whileTap={{scale: 0.9}}
                  onClick={updateGroup}
                  >
-                    Update
+                    {
+                                editLoad? 
+                                <Lottie
+                                    options={defaultOptions}
+                                    height={20}
+                                    width={20}
+                                    style={{
+                                        marginBottom: "10%",
+                                    }}
+                                    isClickToPauseDisabled={true}
+                                />:
+                                <>Update</>
+                            }
                  </motion.button>
                     </div>
                  </motion.div>
