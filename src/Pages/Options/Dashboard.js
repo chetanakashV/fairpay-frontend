@@ -79,8 +79,13 @@ const Dashboard = () => {
 
 
     useEffect(() => {
-        if(sub){
+        if(sub && client && connected){
+           try{
             client.send(`/app/getDashboard/${user._id}`, {}, "");
+           }
+           catch(e){
+            console.log(e);
+           }
         }
     }, [sub])
 
