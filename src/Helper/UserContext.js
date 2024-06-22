@@ -48,7 +48,7 @@ const UserProvider = ({children}) => {
     
    useEffect(() => {
     if (!client && connected) {
-      const Sock = new SockJS(`${process.env.REACT_APP_SERVER_URI}/wss`);
+      const Sock = new SockJS(`${process.env.REACT_APP_SERVER_URI}/ws`);
       setClient(over(Sock));
       console.log("socket connected")
     }
@@ -69,7 +69,7 @@ const UserProvider = ({children}) => {
 
         const reconnect = () => {
           if (!client && connected) {
-            const Sock = new SockJS(`${process.env.REACT_APP_SERVER_URI}/wss`);
+            const Sock = new SockJS(`${process.env.REACT_APP_SERVER_URI}/ws`);
             setClient(over(Sock));
             console.log("socket reconnected")
           }
