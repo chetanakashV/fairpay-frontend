@@ -53,29 +53,45 @@ const Dashboard = () => {
     
 
     useEffect(() => {
-        var subscription; 
-        if(connected && client){
-            const timer = setTimeout(() => {
+        let subscription;
+        let retryTimeout;
 
+        const subscribe = () => {
+            if (connected && client) {
                 subscription = client.subscribe(`/dashboard/${user._id}`, (msg) => {
                     const response = JSON.parse(msg.body);
-                    if(response.messageType == "dashboardDetails") fetchDashboard(response);
+                    if (response.messageType === "dashboardDetails") {
+                        fetchDashboard(response);
+                    }
                     console.log(msg);
-                })
+                });
+
                 setSub(true);
-                console.log("subscribed")
-            }, 1000)
-            
-            return() => {
-                clearTimeout(timer);
-                if(subscription){
-                    subscription.unsubscribe(); 
-                    setSub(false);
-                }
-            };
+                console.log("Subscribed");
+            }
+        };
+
+        const retrySubscription = () => {
+            retryTimeout = setTimeout(() => {
+                console.log("Retrying subscription...");
+                subscribe();
+            }, 10000); // Retry after 10 seconds
+        };
+
+        if (connected && client) {
+            subscribe();
+        } else {
+            retrySubscription();
         }
 
-    }, [client, connected])
+        return () => {
+            clearTimeout(retryTimeout);
+            if (subscription) {
+                subscription.unsubscribe();
+                setSub(false);
+            }
+        };
+    }, [client, connected]);
 
 
     useEffect(() => {
