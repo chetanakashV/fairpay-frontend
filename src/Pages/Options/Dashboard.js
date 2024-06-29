@@ -55,35 +55,39 @@ const Dashboard = () => {
     useEffect(() => {
         let subscription;
         let retryTimeout;
-
+    
         const subscribe = () => {
             if (connected && client) {
                 subscription = client.subscribe(`/dashboard/${user._id}`, (msg) => {
-                    const response = JSON.parse(msg.body);
-                    if (response.messageType === "dashboardDetails") {
-                        fetchDashboard(response);
+                    try {
+                        const response = JSON.parse(msg.body);
+                        if (response.messageType === "dashboardDetails") {
+                            fetchDashboard(response);
+                        }
+                        console.log(msg);
+                    } catch (error) {
+                        console.error("Error parsing message:", error);
                     }
-                    console.log(msg);
                 });
-
+    
                 setSub(true);
                 console.log("Subscribed");
             }
         };
-
+    
         const retrySubscription = () => {
             retryTimeout = setTimeout(() => {
                 console.log("Retrying subscription...");
                 subscribe();
             }, 10000); // Retry after 10 seconds
         };
-
+    
         if (connected && client) {
             subscribe();
         } else {
             retrySubscription();
         }
-
+    
         return () => {
             clearTimeout(retryTimeout);
             if (subscription) {
@@ -91,7 +95,8 @@ const Dashboard = () => {
                 setSub(false);
             }
         };
-    }, [client, connected]);
+    }, [client, connected, user._id]);
+    
 
 
     useEffect(() => {
