@@ -9,6 +9,7 @@ import Title from '../../Components/Title'
 import Lottie from 'react-lottie';
 import './styles.css'
 import Axios  from 'axios';
+import { invitation } from '../../Assets/Templates';
 
 const Account = () => {
     const [bar, setBar] = useState(false);
@@ -22,7 +23,8 @@ const Account = () => {
         userPhoto: "", 
         password: "", 
         cnfPassword: ""
-        })
+        });
+    const [inviteEmail, setInviteEmail] = useState("");
 
     const [selectedFile, setSelectedFile] = useState(null);
         
@@ -105,6 +107,20 @@ const Account = () => {
     }, [user, reset])
 
     const handleBar = (state) => {setBar(state);}
+
+    const handleInvitation = () => {
+        if(/^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/.test(inviteEmail)){
+            const email = inviteEmail;
+            const subject = "Join Me on FairPay"
+            const body = invitation + user.userName; 
+            const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}"`;
+    
+            window.location.href = mailtoLink;
+        }
+        else {
+            toast.error("Your friend's email seems to be invalid!!");
+        }
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault(); 
@@ -243,6 +259,7 @@ const Account = () => {
                     <div className='button-container-3'>
                     <motion.button
                     className='button-14'
+                    onClick={handleInvitation}
                     whileHover={{scale:"1.1"}}
                     whileTap={{scale: "0.9"}}
                     > Send </motion.button>
