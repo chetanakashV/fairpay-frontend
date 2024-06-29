@@ -54,24 +54,26 @@ const Dashboard = () => {
 
     useEffect(() => {
         let subscription;
-        let retryTimeout;
+        let retryTimeout, timer;
     
         const subscribe = () => {
             if (connected && client) {
-                subscription = client.subscribe(`/dashboard/${user._id}`, (msg) => {
-                    try {
-                        const response = JSON.parse(msg.body);
-                        if (response.messageType === "dashboardDetails") {
-                            fetchDashboard(response);
+                const timer = setTimeout(() =>{
+                    subscription = client.subscribe(`/dashboard/${user._id}`, (msg) => {
+                        try {
+                            const response = JSON.parse(msg.body);
+                            if (response.messageType === "dashboardDetails") {
+                                fetchDashboard(response);
+                            }
+                            console.log(msg);
+                        } catch (error) {
+                            console.error("Error parsing message:", error);
                         }
-                        console.log(msg);
-                    } catch (error) {
-                        console.error("Error parsing message:", error);
-                    }
-                });
-    
-                setSub(true);
-                console.log("Subscribed");
+                    });
+                    
+                    setSub(true);
+                    console.log("Subscribed");
+                }, 2000)
             }
         };
     
@@ -79,7 +81,7 @@ const Dashboard = () => {
             retryTimeout = setTimeout(() => {
                 console.log("Retrying subscription...");
                 subscribe();
-            }, 10000); // Retry after 10 seconds
+            }, 20000); // Retry after 10 seconds
         };
     
         if (connected && client) {
@@ -90,6 +92,7 @@ const Dashboard = () => {
     
         return () => {
             clearTimeout(retryTimeout);
+            clearTimeout(timer);
             if (subscription) {
                 subscription.unsubscribe();
                 setSub(false);
