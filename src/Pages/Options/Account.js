@@ -7,9 +7,9 @@ import {motion} from 'framer-motion'
 import animationData from '../../Lotties/Invite.json'
 import Title from '../../Components/Title'
 import Lottie from 'react-lottie';
-import './styles.css'
 import Axios  from 'axios';
 import { invitation } from '../../Assets/Templates';
+import './styles.css'
 
 const Account = () => {
     const [bar, setBar] = useState(false);
