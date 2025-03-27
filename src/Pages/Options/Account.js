@@ -97,7 +97,7 @@ const Account = () => {
             setNewDetails({
                 userName: user.userName, 
                 userEmail: user.userEmail, 
-                userMobile: user.userMobile, 
+                userMobile: user.userMobile,
                 userPhoto: user.imageUrl,
                 password: "", 
                 cnfPassword: ""
