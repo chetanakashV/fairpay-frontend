@@ -22,7 +22,7 @@ Thank you for your assistance.
 
 Best regards,
 [Your Name]
-[Your Contact Information]
+[Your Contact Information] 
 `;
 
 
