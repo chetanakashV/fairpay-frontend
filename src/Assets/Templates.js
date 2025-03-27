@@ -1,5 +1,5 @@
 export const support = `
-Hello Support Team,  
+Hello Support Team, 
 
 I need assistance with an issue I am facing. Here are the details:
 
