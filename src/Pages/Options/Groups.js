@@ -184,7 +184,7 @@ const downloadCSV = (csvContent, filename) => {
 
 
     const handleSelectExpense = (id) => {
-        if(selectedExpense == id) setSelectedExpense("");
+        if(selectedExpense === id) setSelectedExpense("");
         else setSelectedExpense(id);
     }
 
@@ -339,7 +339,7 @@ const downloadCSV = (csvContent, filename) => {
     //         )
     //     );
 
-    //     if(isGroupSelected && selectedGroup.groupId == newGroup.groupId){ 
+    //     if(isGroupSelected && selectedGroup.groupId === newGroup.groupId){ 
     //         setSelectedGroup(newGroup); console.log("selected group modified")}
     //     else {
     //         console.log("no selected group")
@@ -363,7 +363,7 @@ const downloadCSV = (csvContent, filename) => {
             )
         );
 
-        if(selectedGroup.groupId == newItem._id){
+        if(selectedGroup.groupId === newItem._id){
             setSelectedGroup(newGroup);
         }
     };
@@ -427,7 +427,7 @@ const downloadCSV = (csvContent, filename) => {
                     if (response.messageType === "userGroups") fetchUserGroups(response.body);
                     else if (response.messageType === "NewGroup") addNewGroup(response.body);
                     else if (response.messageType === "groupDetails") getGroupDetails(response.body);
-                    else if (response.messageType == "groupUpdated") updateGroup(response.body);
+                    else if (response.messageType === "groupUpdated") updateGroup(response.body);
                     else console.log(response);
                 });
                 console.log("subscribed!!");
@@ -509,7 +509,7 @@ const downloadCSV = (csvContent, filename) => {
                             </div> :
                             groups.map((dataEl) => (
                                 <div className="group-element"
-                                    style={selectedGroup.groupId == dataEl.groupId ? { backgroundColor: "#d8d8d8" } : { backgroundColor: "white" }}
+                                    style={selectedGroup.groupId === dataEl.groupId ? { backgroundColor: "#d8d8d8" } : { backgroundColor: "white" }}
                                     onClick={() => handleSelectGroup(dataEl)}>
                                     <div className="group-item-image" >
                                     <img src={dataEl.groupPhoto} style={{width: "100%", height: "100%", border: "1px solid #d8d8d8", borderRadius: "50px"}} />
@@ -569,12 +569,12 @@ const downloadCSV = (csvContent, filename) => {
                                 <div className="group-details-body">
                                     {expenses && expenses.map((dataEl) => (
                                         <div className="group-expense-element-container" style={
-                                            dataEl._id == selectedExpense ? {
+                                            dataEl._id === selectedExpense ? {
                                                 height: "55%"
                                             }:{ }
                                         }>
                                             <div className="group-expense-element"
-                                            style={dataEl._id == selectedExpense ? {
+                                            style={dataEl._id === selectedExpense ? {
                                                 height: "25%", transition: "height 0s"
                                             }: {}}
                                              onClick={() => {handleSelectExpense(dataEl._id)}} >
@@ -622,7 +622,7 @@ const downloadCSV = (csvContent, filename) => {
                                                       (dataEl,e)}/>
                                                 </div>
                                             </div>
-                                             {dataEl._id==selectedExpense &&
+                                             {dataEl._id===selectedExpense &&
                                              <div className="expense-details">
                                         
 
@@ -635,7 +635,7 @@ const downloadCSV = (csvContent, filename) => {
                                                         <div
                                                         className="expense-details-element-content"
                                                      >
-                                                         {el.userId == dataEl.contributorId? getUserById(el.userId).userName + " paid " + dataEl.totalAmount + " and owes " : getUserById(el.userId).userName + " owes " }
+                                                         {el.userId === dataEl.contributorId? getUserById(el.userId).userName + " paid " + dataEl.totalAmount + " and owes " : getUserById(el.userId).userName + " owes " }
                                                          {el.balance}
                                                         </div>
                                                     </div>

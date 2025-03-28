@@ -1,22 +1,20 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './App.css';
-import Register from './Pages/Auth/Register';
+
 import Landing from './Pages/Landing'
-import Login from './Pages/Auth/Login';
+import About from './Pages/About'
+import Temp from './Pages/Temp';
+
 import Dashboard from './Pages/Options/Dashboard';
 import Groups from './Pages/Options/Groups'
 import Friends from './Pages/Options/Friends'
 import Activity from './Pages/Options/Activity'
 import Settings from './Pages/Options/Settings'
-import About from './Pages/About'
-import UserProvider from './Helper/UserContext';
 import Account from './Pages/Options/Account';
-import Footer from './Components/Footer';
-import Temp from './Pages/Temp';
 
 import SignIn from './Pages/Authentication/SignIn';
 import SignUp from './Pages/Authentication/SignUp';
 
+import UserProvider from './Helper/UserContext';
 import './App.css'
 
 function App() {

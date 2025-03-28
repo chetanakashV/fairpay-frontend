@@ -43,15 +43,9 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
 
         setPaymentDetails((prev) => ({
             ...prev, 
-            [e.target.name]: e.target.name=="totalAmount"? Number(e.target.value) : e.target.value
+            [e.target.name]: e.target.name==="totalAmount"? Number(e.target.value) : e.target.value
         }))
     }
-
-    const formatDate = (isoString) => {
-        const dateObj = new Date(isoString);
-        const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
-        return dateObj.toLocaleDateString(undefined, options);
-    };
 
     useEffect(() => {
         // Get today's date in YYYY-MM-DD format
@@ -66,7 +60,7 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
 
     const handleNumber = (item,e) => {
         paymentDetails.participants.forEach((dataEl) =>{
-            if(dataEl.userId == item.userId){
+            if(dataEl.userId === item.userId){
                 dataEl.balance = Number(e.target.value)
                 setTLoad(!tLoad)
             }
@@ -89,7 +83,7 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
             temp += dataEl.balance;
         })
         setTotal(temp)
-    }, [tLoad])
+    }, [tLoad, paymentDetails.participants])
 
     const check = async () => {
         return new Promise((resolve, reject) => {
@@ -144,14 +138,14 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
     
             // setPaymentDetails((prev) => ({
             //     ...prev,
-            //     participants: prev.participants.map((participant, index) => ({
+            //     participants: prev.participants.forEach((participant, index) => ({
             //         ...participant,
             //         balance: index === numUsers - 1 ? remainder : equalAmount
             //     }))
             // }));
 
-            temp.map((element, index) => {
-                element.balance = index==numUsers-1? remainder: equalAmount;
+            temp.forEach((element, index) => {
+                element.balance = index===numUsers-1? remainder: equalAmount;
             })
 
             setPaymentDetails((prev) => ({
@@ -175,7 +169,7 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                 contributorId: selectedUser.userId
             }))
             let tempPart = [];
-            users.map((dataEl) => {
+            users.forEach((dataEl) => {
                 tempPart.push({
                     userId: dataEl.userId, 
                     balance: 0.0
@@ -198,7 +192,7 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
             subscription = client.subscribe(`/groups/${user.userId}`, (msg) => {
                 const data = JSON.parse(msg.body); 
                 
-                if(data.messageType == "groupUserDetails") fetchUsers(data);
+                if(data.messageType === "groupUserDetails") fetchUsers(data);
                 else {
                     console.log(data)
                 }
@@ -211,7 +205,7 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                 subscription.unsubscribe()
             }
         })
-    },[])
+    },[client, connected, user.userId, sub])
 
     useEffect(() => {
         if(sub){
@@ -219,7 +213,7 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
             client.send(`/app/getGroupUsers/${user.userId}`, {}, selectedGroup.groupId)
         }
         
-    }, [sub])
+    }, [sub, client, selectedGroup.groupId, user.userId])
 
     const fetchUsers = async (data) => {
         const temp = JSON.parse(data.body); 
@@ -241,7 +235,7 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                 userPhoto: user.imageUrl
             })
         }
-    }, [users])
+    }, [users, user._id, user.imageUrl, user.userName])
 
 
     const handleSelect = (data) => {
@@ -295,7 +289,7 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
             </div>
                 <h2 id="title"> Add Expense</h2> 
 
-            {page==0 && 
+            {page===0 && 
             <div style={{
                 height: "80%", 
                 width: "100%", 
@@ -375,7 +369,7 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                         width: "100%",
                         cursor: "pointer", 
                      }}>
-                        {selectedUser.userId == user._id ? " You" : selectedUser.userName}
+                        {selectedUser.userId === user._id ? " You" : selectedUser.userName}
                      </button>
 
                      {show1 && <div style={{
@@ -391,7 +385,7 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                     
                      >
                         {
-                            !userLoad && users.map((dataEl) => {
+                            !userLoad && users.forEach((dataEl) => {
                                 return(
                                     <motion.div style={{
                                         display: "flex", 
@@ -426,7 +420,7 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                                         marginLeft: "5%",
                                         width: "70%",
                                         cursor: "pointer",
-                                       }}>  {dataEl.userId == user._id ? "You" : dataEl.userName} </div>
+                                       }}>  {dataEl.userId === user._id ? "You" : dataEl.userName} </div>
                                     </motion.div>
                                 )
                             })
@@ -484,7 +478,7 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                 </div>
             </div>}
 
-            {page==1 && <div style={{
+            {page===1 && <div style={{
                 height: "80%", 
                 width: "100%", 
                 padding: "1%",
@@ -546,7 +540,7 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                 }}>
 
                 {
-                    users.map((dataEl) => {
+                    users.forEach((dataEl) => {
                         return(
                            <div style={{
                             height: "25%", width: "100%", margin: "1%", display: "flex", alignItems: "center", padding: "0% 1%"
@@ -578,7 +572,7 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                     })
                 }
 
-                {/* {paymentDetails.participants.map((participant, index) => (
+                {/* {paymentDetails.participants.forEach((participant, index) => (
                     <div key={index} style={{
                         display: "flex",
                         justifyContent: "space-between",

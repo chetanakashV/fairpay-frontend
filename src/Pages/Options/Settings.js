@@ -43,7 +43,7 @@ const Settings = () => {
             const timer = setTimeout(() => {
                 subscription = client.subscribe(`/settings/${user._id}`, (msg) =>{
                     const res = JSON.parse(msg.body);
-                    if(res.messageType == "userPreferences") fetchPreferences(res.body);
+                    if(res.messageType === "userPreferences") fetchPreferences(res.body);
                     else console.log(msg); 
                 })
                 setSub(true);

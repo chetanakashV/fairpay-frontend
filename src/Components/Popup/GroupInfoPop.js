@@ -49,7 +49,7 @@ const GroupInfoPop = ({handleClose, users, fetchUser, showToast, selectedGroup})
         if(client && connected){
             subscription = client.subscribe(`/groups/selectedGroup/${selectedGroup.groupId}`, msg => {
                 const response = JSON.parse(msg.body);
-                if(response.messageType == "groupBalances") fetchBalances(response.body); 
+                if(response.messageType === "groupBalances") fetchBalances(response.body); 
             })
             setSub(true);
             
@@ -68,7 +68,7 @@ const GroupInfoPop = ({handleClose, users, fetchUser, showToast, selectedGroup})
     const getBalance = (userId) => {
         let data = 0;
         balances.forEach(element => {
-            if(element.userId == userId) data = element.balance; 
+            if(element.userId === userId) data = element.balance; 
         })
 
         return data; 
@@ -82,7 +82,7 @@ const GroupInfoPop = ({handleClose, users, fetchUser, showToast, selectedGroup})
             receiverEmail: fetchUser(receiverId).userEmail
         }).then(response => {
             
-            if(response.data.status == 200) showToast("success", response.data.message);
+            if(response.data.status === 200) showToast("success", response.data.message);
             else showToast("error", response.data.message);
         })
     }
@@ -90,7 +90,7 @@ const GroupInfoPop = ({handleClose, users, fetchUser, showToast, selectedGroup})
     const getBalances = (userId) => {
        let data = []; 
        balances.forEach(element => {
-            if(element.userId == userId) data = element.items;
+            if(element.userId === userId) data = element.items;
        });
 
        return data; 

@@ -108,7 +108,7 @@ const EditGroup = ({handleClose, selectedGroup, groupUsers}) => {
             updatedBy: user._id,
             newUsers: members
         }).then(response => {
-            if(response.data.status == 200){
+            if(response.data.status === 200){
                 toast.success(response.data.message);
                 setTimeout(() => {
                     handleClose()
@@ -137,7 +137,7 @@ const EditGroup = ({handleClose, selectedGroup, groupUsers}) => {
         client.subscribe(`/groups/${user._id}`, (msg) => {
             const res = JSON.parse(msg.body)
 
-            if(res.messageType == "userByEmail"){
+            if(res.messageType === "userByEmail"){
                 fetchUser(res)
                 setAddLoad(false)
             }
@@ -149,7 +149,7 @@ const EditGroup = ({handleClose, selectedGroup, groupUsers}) => {
 
     const fetchUser = async (res) => {
         setEmail('')
-        if(res.response.status == 404) {
+        if(res.response.status === 404) {
             toast.error(res.response.message)
         }
         else {
@@ -189,7 +189,7 @@ const EditGroup = ({handleClose, selectedGroup, groupUsers}) => {
     }
 
     const sendMsg = () => {
-        if(email == "") toast.error("Email Cannot be empty")
+        if(email === "") toast.error("Email Cannot be empty")
         else if(client){
             setAddLoad(true)
             client.send(`/app/getUser/${user._id}`, {}, email)
@@ -236,7 +236,7 @@ const EditGroup = ({handleClose, selectedGroup, groupUsers}) => {
                 >
                 <div style={{width: "100%",display: "flex", flexDirection:"row-reverse",alignItems:"end", marginTop: "2%", cursor: "pointer"}}>
                  <CloseIcon onClick={handleClose}/> </div>
-                { page==0 ? <motion.div 
+                { page===0 ? <motion.div 
                 className="create-group-container">
                     <h2 id="title">Edit Group</h2> 
                     <div style={{
@@ -257,7 +257,7 @@ const EditGroup = ({handleClose, selectedGroup, groupUsers}) => {
                         backgroundColor: "#d8d8d8",
                         borderRadius: "50px",
                     }}>
-                        {newDetails.groupPhoto == ""? 
+                        {newDetails.groupPhoto === ""? 
                             <CameraAltIcon scale="1.1" style={{color:"#959595", 
                         transform: "scale(2)", cursor: "pointer" }} />
                         : 
@@ -317,7 +317,7 @@ const EditGroup = ({handleClose, selectedGroup, groupUsers}) => {
                             name="groupType"
                             value="Work"
                             className={
-                                newDetails.groupType=="Work"?"group-type-selected":"group-type"}
+                                newDetails.groupType==="Work"?"group-type-selected":"group-type"}
                             onClick={handleInput}
                             >
                                 Work
@@ -325,14 +325,14 @@ const EditGroup = ({handleClose, selectedGroup, groupUsers}) => {
                             <motion.button
                             name="groupType"
                             value="House"
-                            className={ newDetails.groupType=="House"?"group-type-selected":"group-type"}
+                            className={ newDetails.groupType==="House"?"group-type-selected":"group-type"}
                             onClick={handleInput}
                             >
                                 House
                             </motion.button>
                             <motion.button
                             name="groupType"
-                            className={ newDetails.groupType=="Travel"?"group-type-selected":"group-type"}
+                            className={ newDetails.groupType==="Travel"?"group-type-selected":"group-type"}
                             value="Travel"
                             onClick={handleInput}
                             >
@@ -341,7 +341,7 @@ const EditGroup = ({handleClose, selectedGroup, groupUsers}) => {
                             <motion.button
                             name="groupType"
                             style={{border: "none"}}
-                            className={ newDetails.groupType=="Others"?"group-type-selected":"group-type"}
+                            className={ newDetails.groupType==="Others"?"group-type-selected":"group-type"}
                             value="Others"
                             onClick={handleInput}
                             >

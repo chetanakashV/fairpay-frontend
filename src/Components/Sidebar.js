@@ -53,37 +53,37 @@ const Sidebar = (props) => {
                <div  id='logo'> Fair Pay </div> 
             </div>
             <div className='sidebar-container-1'>
-            <div className={option=="Dashboard"? 'sidebar-hovered': 'sidebar-option'}
+            <div className={option==="Dashboard"? 'sidebar-hovered': 'sidebar-option'}
             onMouseEnter={() => handleOpenOption("Dashboard")} onMouseLeave={handleCloseOption}
             onClick={() => handleNavigate("dashboard")}>
                <div className='sidebar-icon'> <Dashboard/>  </div> 
                <div className= {collapse?'hide-text':'sidebar-text'}> Dashboard </div> 
             </div>
-            <div className={option=="Groups"? 'sidebar-hovered': 'sidebar-option'}
+            <div className={option==="Groups"? 'sidebar-hovered': 'sidebar-option'}
             onMouseEnter={() => handleOpenOption("Groups")} onMouseLeave={handleCloseOption}
              onClick={() => handleNavigate("groups")}>
                 <div className='sidebar-icon'><Groups /></div>
                 <div className= {collapse?'hide-text':'sidebar-text'}> Groups </div>
             </div>
-            <div className={option=="Friends"? 'sidebar-hovered': 'sidebar-option'}
+            <div className={option==="Friends"? 'sidebar-hovered': 'sidebar-option'}
             onMouseEnter={() => handleOpenOption("Friends")} onMouseLeave={handleCloseOption}
              onClick={() => handleNavigate("friends")}>
                 <div className='sidebar-icon'><Diversity3/></div>
                 <div className= {collapse?'hide-text':'sidebar-text'}> Friends </div>
             </div>
-            <div className={option=="Activity"? 'sidebar-hovered': 'sidebar-option'} 
+            <div className={option==="Activity"? 'sidebar-hovered': 'sidebar-option'} 
             onMouseEnter={() => handleOpenOption("Activity")} onMouseLeave={handleCloseOption}
             onClick={() => handleNavigate("activity")}>
                <div className='sidebar-icon'><Timeline/></div>
                <div className= {collapse?'hide-text':'sidebar-text'}> Activity </div>
             </div>
-            <div className={option=="Account"? 'sidebar-hovered': 'sidebar-option'} 
+            <div className={option==="Account"? 'sidebar-hovered': 'sidebar-option'} 
             onMouseEnter={() => handleOpenOption("Account")} onMouseLeave={handleCloseOption}
             onClick={() => handleNavigate("Account")}>
                 <div className='sidebar-icon'><Person/></div>
                 <div className= {collapse?'hide-text':'sidebar-text'}>Account</div>
             </div>
-            <div className={option=="Settings"? 'sidebar-hovered': 'sidebar-option'} 
+            <div className={option==="Settings"? 'sidebar-hovered': 'sidebar-option'} 
             onMouseEnter={() => handleOpenOption("Settings")} onMouseLeave={handleCloseOption}
             onClick={() => handleNavigate("settings")}>
                 <div className='sidebar-icon'><Settings/></div>

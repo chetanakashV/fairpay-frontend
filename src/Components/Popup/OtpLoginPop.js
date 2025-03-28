@@ -39,22 +39,22 @@ const OtpLoginPop = ({handleClose, mail, setOtpVerified, showToast}) => {
 
     const verifyOTP = () => {
         console.log(otp);
-        if(otp == "" || otp.length < 6 || !isNumeric(otp)) {showToast("error", "Invalid OTP!"); return; }
+        if(otp === "" || otp.length < 6 || !isNumeric(otp)) {showToast("error", "Invalid OTP!"); return; }
 
         Axios.post(`${process.env.REACT_APP_SERVER_URI}/email/verifyOTP`, {
             email: mail, 
             otp: otp
         }).then(response => {
-            if(response.data.status == 200) {
+            if(response.data.status === 200) {
                 Axios.post(`${process.env.REACT_APP_SERVER_URI}/users/loginOtp`, {
                     userEmail: mail, 
                     password: "temp"
                 }).then(response => {
-                    if(response.data.response.status == 400){
+                    if(response.data.response.status === 400){
                         showToast("error",response.data.response.message);
                         return "error";
                     }
-                    else if(response.data.response.status == 200){ 
+                    else if(response.data.response.status === 200){ 
                         showToast("success","You're successfully logged In")
                         setUser(response.data.user);
                         setLogIn(true);
@@ -62,7 +62,7 @@ const OtpLoginPop = ({handleClose, mail, setOtpVerified, showToast}) => {
                     }
                     return "done";
                 }).then(response => {
-                    if(response == "done") navigate('/dashboard')
+                    if(response === "done") navigate('/dashboard')
                 })
             }
             else {showToast("error", "Incorrect OTP!")}
@@ -74,7 +74,7 @@ const OtpLoginPop = ({handleClose, mail, setOtpVerified, showToast}) => {
             email: mail, 
             otp: 6969
         }).then(response =>{
-            if(response.data.status == 200) {showToast("success", "OTP Resent Successfully!");}
+            if(response.data.status === 200) {showToast("success", "OTP Resent Successfully!");}
             else { showToast("error", response.data.message);}
         })
     }

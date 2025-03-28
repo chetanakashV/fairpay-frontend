@@ -131,7 +131,7 @@ const Dashboard = () => {
         let tempGroups = [[],[],[]];
 
         await res.groups.forEach(element => {
-            if(element.groupBalance == 0){
+            if(element.groupBalance === 0){
                 tempGroups[2].push(element);
             }
             else if(element.groupBalance > 0){
