@@ -32,17 +32,17 @@ const Landing = () => {
           userEmail: "chetanakash1234@gmail.com", 
           password: "demo"
         }).then(response => {
-          if(response.data.response.status == 400){
+          if(response.data.response.status === 400){
               return "error";
           }
-          else if(response.data.response.status == 200){ 
+          else if(response.data.response.status === 200){ 
               setUser(response.data.user);
               setLogIn(true);
               sessionStorage.setItem("logIn", true);
           }
           return "done";
         }).then(response => {
-          if(response == "done") navigate('/dashboard')
+          if(response === "done") navigate('/dashboard')
         })
       }
       

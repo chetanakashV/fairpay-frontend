@@ -73,7 +73,7 @@ const Friends = () => {
 
     const handleRequest = (item, type) => {
         let body; 
-        if(type == "sendRequest")
+        if(type === "sendRequest")
         {   body = {
                 type: type, 
                 senderId: user._id, 
@@ -90,7 +90,7 @@ const Friends = () => {
         
         Axios.post(`${process.env.REACT_APP_SERVER_URI}/friends/handleRequest`, body)
         .then(response => {
-            if(response.data.status == 400){
+            if(response.data.status === 400){
                 toast.error("Error Processing the Request");
                 console.log(response)
             }
@@ -125,8 +125,8 @@ const Friends = () => {
                 subscription = client.subscribe(`/friends/${user._id}`, (msg) => {
                     const response = JSON.parse(msg.body);
                     
-                    if(response.messageType == "userFriends") fetchData(response.body)
-                    else if(response.messageType == "commonGroups") fetchGroups(response.body)
+                    if(response.messageType === "userFriends") fetchData(response.body)
+                    else if(response.messageType === "commonGroups") fetchGroups(response.body)
                     else console.log(response);
                 })
                 setSub(true)
@@ -160,11 +160,11 @@ const Friends = () => {
                <div className="friends-list-container">
                     <div className="friends-options-bar">
                         <div className="fob-option" data-value = "Friends"
-                         onClick={handleOption} style={option=="Friends"? {backgroundColor: "white"}: {}} id="end"> Friends</div>
+                         onClick={handleOption} style={option==="Friends"? {backgroundColor: "white"}: {}} id="end"> Friends</div>
                         <div className="fob-option" data-value = "Suggestions"
-                         onClick={handleOption} style={option=="Suggestions"? {backgroundColor: "white"}: {}}> Suggestions</div>
+                         onClick={handleOption} style={option==="Suggestions"? {backgroundColor: "white"}: {}}> Suggestions</div>
                         <div className="fob-option" data-value = "Requests" 
-                        onClick={handleOption} style={option=="Requests"? {backgroundColor: "white"}: {}} id="end">  Requests</div>
+                        onClick={handleOption} style={option==="Requests"? {backgroundColor: "white"}: {}} id="end">  Requests</div>
                     </div>
                     <div className="friends-list">
                             {friendsLoad ? 
@@ -173,12 +173,12 @@ const Friends = () => {
                             : people[option].map(person => (
                                  <div className="friends-list-element" onClick={() => {handleSelecteUser(person)}}>
                                     <div className="fle-image">
-                                        <img src={option == "Suggestions"? getUser(person.userId).userPhoto : getUser(person).userPhoto} style={{height: "100%", width: "100%", backgroundColor: "black"}}/>
+                                        <img src={option === "Suggestions"? getUser(person.userId).userPhoto : getUser(person).userPhoto} style={{height: "100%", width: "100%", backgroundColor: "black"}}/>
                                     </div>
-                                    <div className="fle-name"> {option == "Suggestions"? getUser(person.userId).userName : getUser(person).userName}</div>
-                                    <div className="fle-options" id={option=="Suggestions"?"one": option=="Requests"? "two": "three"}>
+                                    <div className="fle-name"> {option === "Suggestions"? getUser(person.userId).userName : getUser(person).userName}</div>
+                                    <div className="fle-options" id={option==="Suggestions"?"one": option==="Requests"? "two": "three"}>
                                         {
-                                            option=="Suggestions"?
+                                            option==="Suggestions"?
                                                 person.sent?
                                                 <div style={{
                                                     fontSize: "medium", 
@@ -204,7 +204,7 @@ const Friends = () => {
                                                     Add
                                                 </motion.button>
                                             :
-                                            option == "Requests"?
+                                            option === "Requests"?
                                                 <div style={{display: "flex", paddingLeft: "5%", columnGap: "10%", justifyContent: "center", alignItems: "center", paddingTop: "10%"}}>
                                                 <motion.button
                                                 style={{

@@ -88,7 +88,7 @@ const CreateGroup = ({handleClose, showToast}) => {
             createdBy: user._id, 
             groupPhoto
         }).then((response) => {
-            if(response.data.status == 200){
+            if(response.data.status === 200){
              toast.success("Group Created Successfully!!");
              handleClose();
             }
@@ -105,13 +105,13 @@ const CreateGroup = ({handleClose, showToast}) => {
     }
       
     const nextPage = () => {
-        if(groupName == "") {toast.error("Group Name Cannot be Empty!!"); return; }
+        if(groupName === "") {toast.error("Group Name Cannot be Empty!!"); return; }
         setPage(1);
 
         client.subscribe(`/groups/${user._id}`, (msg) => {
             const res = JSON.parse(msg.body)
 
-            if(res.messageType == "userByEmail"){
+            if(res.messageType === "userByEmail"){
                 fetchUser(res)
                 setAddLoad(false)
             }
@@ -121,13 +121,13 @@ const CreateGroup = ({handleClose, showToast}) => {
     }
 
     useEffect(() => {
-        if(users.length == 0) setUsers([[user.imageUrl, user.userName, user.userEmail]]) 
+        if(users.length === 0) setUsers([[user.imageUrl, user.userName, user.userEmail]]) 
     },[user])
 
 
     const fetchUser = async (res) => {
         setEmail('')
-        if(res.response.status == 404) {
+        if(res.response.status === 404) {
             toast.error(res.response.message)
         }
         else {
@@ -150,7 +150,7 @@ const CreateGroup = ({handleClose, showToast}) => {
     }
 
     const sendMsg = () => {
-        if(email == "") toast.error("Email Cannot be empty")
+        if(email === "") toast.error("Email Cannot be empty")
         else if(client){
             setAddLoad(true)
             client.send(`/app/getUser/${user._id}`, {}, email)
@@ -195,7 +195,7 @@ const CreateGroup = ({handleClose, showToast}) => {
                 >
                 <div style={{width: "100%",display: "flex", flexDirection:"row-reverse",alignItems:"end", marginTop: "2%", cursor: "pointer"}}>
                  <CloseIcon onClick={handleClose}/> </div>
-                { page==0 ? <motion.div 
+                { page===0 ? <motion.div 
                 className="create-group-container">
                     <h2 id="title">Create Group</h2> 
                     <div style={{
@@ -214,7 +214,7 @@ const CreateGroup = ({handleClose, showToast}) => {
                         backgroundColor: "#d8d8d8",
                         borderRadius: "50px",
                     }}>
-                        {groupPhoto == ""? 
+                        {groupPhoto === ""? 
                             <CameraAltIcon scale="1.1" style={{color:"#959595", 
                         transform: "scale(2)", cursor: "pointer" }} />
                         : 
@@ -272,26 +272,26 @@ const CreateGroup = ({handleClose, showToast}) => {
                         <label> Group Type </label>
                         <div className="sliding-options">
                             <motion.button 
-                            className={type=="Work"?"group-type-selected":"group-type"}
+                            className={type==="Work"?"group-type-selected":"group-type"}
                             onClick={() => handleType("Work")}
                             >
                                 Work
                             </motion.button>
                             <motion.button
-                            className={type=="House"?"group-type-selected":"group-type"}
+                            className={type==="House"?"group-type-selected":"group-type"}
                             onClick={() => handleType("House")}
                             >
                                 House
                             </motion.button>
                             <motion.button
-                            className={type=="Travel"?"group-type-selected":"group-type"}
+                            className={type==="Travel"?"group-type-selected":"group-type"}
                             onClick={() => handleType("Travel")}
                             >
                                 Travel
                             </motion.button>
                             <motion.button
                             style={{border: "none"}}
-                            className={type=="Others"?"group-type-selected":"group-type"}
+                            className={type==="Others"?"group-type-selected":"group-type"}
                             onClick={() => handleType("Others")}
                             >
                                 Others
@@ -347,7 +347,7 @@ const CreateGroup = ({handleClose, showToast}) => {
                             return(
                                 <div className="add-users-group">
                                     <img src = {dataEl[0]}  height={"40px"} width={"40px"} className="add-users-image" title={dataEl[2]}/>
-                                    <div className="add-users-text">{dataEl[2] == user.userEmail? "You" : dataEl[1]}</div>
+                                    <div className="add-users-text">{dataEl[2] === user.userEmail? "You" : dataEl[1]}</div>
                                    {dataEl[2] != user.userEmail ? <div className="add-users-icon"><CloseIcon onClick = {() => {removeUser(dataEl)}}
                                    /></div>: 
                                    <div className="add-users-icon"></div>}

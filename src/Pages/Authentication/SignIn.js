@@ -19,7 +19,7 @@ const SignIn = () => {
     })
 
     const showToast = (status, message) =>{
-        if(status == "success") toast.success(message);
+        if(status === "success") toast.success(message);
         else toast.error(message);
     }
  
@@ -40,8 +40,8 @@ const SignIn = () => {
                 type: "numeric",
                 organization: "FairPay"
             }).then((response) => {
-                if(response.data.status == 400) toast.error(response.data.message)
-                else if(response.data.status == 200) toast.success(response.data.message)
+                if(response.data.status === 400) toast.error(response.data.message)
+                else if(response.data.status === 200) toast.success(response.data.message)
             })
         }
         else {
@@ -69,10 +69,10 @@ const SignIn = () => {
             userEmail: logInDetails.userMail, 
             password: logInDetails.userPwd
         }).then(response => {
-            if(response.data.response.status == 400){
+            if(response.data.response.status === 400){
                  toast.error(response.data.response.message);
                 return "error";}
-                else if(response.data.response.status == 200){ 
+                else if(response.data.response.status === 200){ 
                     toast.success("You're successfully logged In")
                     setLogIn(true);
                     setUser(response.data.user);
@@ -80,7 +80,7 @@ const SignIn = () => {
             }
             return "done";
         }).then(response => {
-            if(response == "done") navigate('/dashboard')
+            if(response === "done") navigate('/dashboard')
         })
         
     }

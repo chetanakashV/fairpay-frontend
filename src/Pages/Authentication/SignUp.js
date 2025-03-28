@@ -29,7 +29,7 @@ const SignUp = () => {
     const handleCaptcha = () => {setCaptcha(true);}
 
     const handleChange = (e) => {
-        if(e.target.name == "userName") setToggle(true)
+        if(e.target.name === "userName") setToggle(true)
 
         setUserDetails((prev) => ({
             ...prev, 
@@ -39,7 +39,7 @@ const SignUp = () => {
     }
 
     const showToast = (status, message) =>{
-        if(status == "success") toast.success(message);
+        if(status === "success") toast.success(message);
         else toast.error(message);
     }
 
@@ -53,7 +53,7 @@ const SignUp = () => {
             password: userDetails.userPwd
         }).then(response => {
             console.log(response)
-            if(response.data.status == 400) toast.error(response.data.message)
+            if(response.data.status === 400) toast.error(response.data.message)
             else toast.success(response.data.message)
             setOtpVerified(false)
         })
@@ -72,8 +72,8 @@ const SignUp = () => {
             type: "numeric",
             organization: "FairPay"
         }).then((response) => {
-            if(response.data.status == 400) toast.error(response.data.message)
-            else if(response.data.status == 200) toast.success(response.data.message)
+            if(response.data.status === 400) toast.error(response.data.message)
+            else if(response.data.status === 200) toast.success(response.data.message)
         })
 
     }

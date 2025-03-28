@@ -48,7 +48,7 @@ const Activity = () => {
                 subscription = client.subscribe(`/activity/${user._id}`, (msg) => {
                     const response = JSON.parse(msg.body);
 
-                    if(response.messageType == "getActivities") fetchActivities(response.body);
+                    if(response.messageType === "getActivities") fetchActivities(response.body);
                     else console.log(response);
                 })
                 setSub(true);

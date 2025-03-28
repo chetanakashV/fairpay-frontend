@@ -41,7 +41,7 @@ const UserProvider = ({children}) => {
 
     useEffect(() => {
         if(!logIn){
-            setLogIn(sessionStorage.getItem("logIn")=="true")
+            setLogIn(sessionStorage.getItem("logIn")==="true")
         }
     }, [logIn])
 

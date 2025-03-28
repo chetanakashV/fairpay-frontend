@@ -20,7 +20,7 @@ const Navbar = (props) => {
                 {/* <motion.button 
                     className='button1'
                     name='about'
-                    initial = {props.isSelected == "About"? { scale: 1.1,
+                    initial = {props.isSelected === "About"? { scale: 1.1,
                     backgroundColor: 'white' }: {scale: 1}}
                     whileHover={{scale: 1.2}}
                     whileTap={{scale: 0.9}}
@@ -32,7 +32,7 @@ const Navbar = (props) => {
                 <motion.button 
                     className='button1'
                     name='signup'
-                    initial = {props.isSelected == "Register"? { scale: 1.1,
+                    initial = {props.isSelected === "Register"? { scale: 1.1,
                     backgroundColor: 'white' }: {scale: 1}}
                     whileHover={{scale: 1.2}}
                     whileTap={{scale: 0.9}}
@@ -44,7 +44,7 @@ const Navbar = (props) => {
                 <motion.button 
                     className='button1'
                     name='login'
-                    initial = {props.isSelected == "Login"? { scale: 1.1, 
+                    initial = {props.isSelected === "Login"? { scale: 1.1, 
                     backgroundColor: "white" }: {scale: 1}}
                     whileHover={{scale: 1.2}}
                     whileTap={{scale: 0.9}}

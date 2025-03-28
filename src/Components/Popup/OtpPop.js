@@ -14,13 +14,13 @@ const OtpPop = ({handleClose, mail, setOtpVerified, showToast}) => {
 
     const verifyOTP = () => {
         console.log(otp);
-        if(otp == "" || otp.length < 6 || !isNumeric(otp)) {showToast("error", "Invalid OTP!"); return; }
+        if(otp === "" || otp.length < 6 || !isNumeric(otp)) {showToast("error", "Invalid OTP!"); return; }
 
         Axios.post(`${process.env.REACT_APP_SERVER_URI}/email/verifyOTP`, {
             email: mail, 
             otp: otp
         }).then(response => {
-            if(response.data.status == 200) {setOtpVerified(true);  }
+            if(response.data.status === 200) {setOtpVerified(true);  }
             else {showToast("error", "Incorrect OTP!")}
         })
     }
@@ -30,7 +30,7 @@ const OtpPop = ({handleClose, mail, setOtpVerified, showToast}) => {
             email: mail, 
             otp: 6969
         }).then(response =>{
-            if(response.data.status == 200) {showToast("success", "OTP Resent Successfully!");}
+            if(response.data.status === 200) {showToast("success", "OTP Resent Successfully!");}
             else { showToast("error", response.data.message);}
         })
     }

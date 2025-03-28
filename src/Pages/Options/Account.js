@@ -40,7 +40,7 @@ const Account = () => {
     const handleInputChange = (e) => {
         setNewDetails((prev) => ({
             ...prev, 
-            [e.target.name]: e.target.name=="userMobile"? Number(e.target.value) : e.target.value
+            [e.target.name]: e.target.name==="userMobile"? Number(e.target.value) : e.target.value
         }))
     }
 
@@ -138,7 +138,7 @@ const Account = () => {
                 password: (newDetails.password!==""? newDetails.password: "dontChange"), 
                 userPhoto: newDetails.userPhoto
             }).then(response => {
-                if(response.data.status == 200){
+                if(response.data.status === 200){
                      toast.success("Changes Saved Successfully! ");
                      setUser((prev) => ({
                         ...prev, 
