@@ -15,9 +15,11 @@ const Dashboard = () => {
     const [bar, setBar] = useState(false);
     const [sub, setSub] = useState(false);
     const [load, setLoad] = useState(true);
+
     const groupRef = useRef(null);
     const [groupOverflow, setGroupOverflow] = useState(false);
     const [groupsOpen, setGroupsOpen] = useState(false);
+
     const [balance, setBalance] = useState({
         totalBalance: 0, 
         amountYouOwe: 0, 
@@ -28,7 +30,9 @@ const Dashboard = () => {
     const [groups2, setGroups2] = useState([])
     const [groups3, setGroups3] = useState([])
 
-    const handleBar = (state) => {setBar(state);}
+    const [groupFilter, setGroupFilter] = useState('all');
+
+    const handleBar = setBar;
     const {client, connected} = useContext(SocketContext);
     const {user} = useContext(UserContext);
 
@@ -37,7 +41,7 @@ const Dashboard = () => {
         autoplay: true,
         animationData: animationData,
         rendererSettings: {
-          preserveAspectRatio: "xMidYMid slice"
+          preserveAspectRatio: "xMidYMid meet"
         }
       };
 
@@ -81,7 +85,7 @@ const Dashboard = () => {
             retryTimeout = setTimeout(() => {
                 console.log("Retrying subscription...");
                 subscribe();
-            }, 20000); // Retry after 10 seconds
+            }, 2000);
         };
     
         if (connected && client) {
@@ -98,9 +102,8 @@ const Dashboard = () => {
                 setSub(false);
             }
         };
-    }, [client, connected, user._id]);
+    }, [client, connected]);
     
-
 
     useEffect(() => {
         if(sub && client && connected){
@@ -112,10 +115,6 @@ const Dashboard = () => {
            }
         }
     }, [sub])
-
-    useEffect(() => {
-
-    })
 
     const fetchDashboard = async (data) => {
         const res = JSON.parse(data.body);
@@ -150,145 +149,173 @@ const Dashboard = () => {
 
     }
 
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat('en-IN', {
+            style: 'currency',
+            currency: 'INR',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        }).format(Math.abs(amount)).replace('₹', '')
+    }
+
+    const getBalanceColor = (amount) => {
+        if (amount > 0) return "#1cc29f"
+        if (amount < 0) return "#ff6632"
+        return "#636e72"
+    }
+
+    const renderBalanceCard = (title, amount, icon) => (
+        <div className='dashboard-balance-container1'>
+            <div className='dashboard-balance-title'>
+                {title}
+            </div>
+            <div 
+                className='dashboard-balance-amount' 
+                style={{ color: getBalanceColor(amount) }}
+            >
+                {amount < 0 ? "-" : amount > 0 ? "+" : ""}₹{formatCurrency(amount)}
+            </div>
+        </div>
+    )
+
+    const renderGroupElement = (group) => (
+        <div className='dashboard-group-element' key={group.id}>
+            <div className='dashboard-group-element-image'>
+                <img 
+                    src={group.groupPhoto} 
+                    alt={group.groupName}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+            </div>
+            <div className='dashboard-group-element-name'>
+                {group.groupName}
+            </div>
+            <div 
+                className='dashboard-group-element-amount'
+                style={{ color: getBalanceColor(group.groupBalance) }}
+            >
+                ₹{formatCurrency(Math.abs(group.groupBalance))}
+            </div>
+        </div>
+    )
+
+    const renderGroupSection = (title, groups) => (
+        <div className='dashboard-group-container1'>
+            <div className='dashboard-group-container-title'>
+                {title}
+            </div>
+            <div className='dashboard-group-container-body'>
+                {groups && groups.map(renderGroupElement)}
+                {groups && groups.length === 0 && (
+                    <div style={{ 
+                        textAlign: 'center', 
+                        color: '#636e72', 
+                        marginTop: '20px',
+                        fontSize: '0.9rem'
+                    }}>
+                        No groups to display
+                    </div>
+                )}
+            </div>
+        </div>
+    )
+
+    const getFilteredGroups = () => {
+        switch(groupFilter) {
+            case 'owe':
+                return [{
+                    title: "Groups You Owe",
+                    groups: groups1
+                }];
+            case 'owed':
+                return [{
+                    title: "Groups Owe to You",
+                    groups: groups2
+                }];
+            default:
+                return [
+                    {
+                        title: "Groups You Owe",
+                        groups: groups1
+                    },
+                    {
+                        title: "Groups Owe to You",
+                        groups: groups2
+                    },
+                    {
+                        title: "Settled Up Groups",
+                        groups: groups3
+                    }
+                ];
+        }
+    }
+
+    const isFilterActive = () => groupFilter !== 'all';
+
+    const renderGroupFilter = () => (
+        <div className="dashboard-group-filter">
+            <button 
+                className={`filter-button ${groupFilter === 'all' ? 'active' : ''}`}
+                onClick={() => setGroupFilter('all')}
+            >
+                All Groups
+            </button>
+            <button 
+                className={`filter-button ${groupFilter === 'owe' ? 'active' : ''}`}
+                onClick={() => setGroupFilter('owe')}
+            >
+                You Owe
+            </button>
+            <button 
+                className={`filter-button ${groupFilter === 'owed' ? 'active' : ''}`}
+                onClick={() => setGroupFilter('owed')}
+            >
+                You're Owed
+            </button>
+        </div>
+    )
+
     return(
         <div className='page-container'>
-        <Sidebar option = "Dashboard" handleBar={handleBar}/> 
-        <Profile/> <Title title="Dashboard" bar = {bar}/>
+            <Sidebar option="Dashboard" handleBar={handleBar}/> 
+            <Profile/> 
+            <Title title="Dashboard" bar={bar}/>
 
-            {load ? 
-                
-                <div className={bar? 'dashboard-main-container-closed': 'dashboard-main-container'} >
+            {load ? (
+                <div className={bar? 'dashboard-main-container-closed': 'dashboard-main-container'} 
+                     style={{height: "100vh", width: "100vw", display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                     <Lottie
                         options={defaultOptions}
-                        height={500}
-                        width={500}
+                        height={600}
+                        width={600}
                         isClickToPauseDisabled={true}
                     />
                 </div> 
-            :
-            <div className={bar? 'dashboard-main-container-closed':'dashboard-main-container'}>
-                
-                <div className='dashboard-summary-container'>
-                    <div className='dashboard-ts'> Total Summary</div>
-                    <div className='dashboard-balances'>
-                        <div className='dashboard-balance-container1'>
-                            <div className='dashboard-balance-title'> Total Balance</div>
-                            <div className='dashboard-balance-amount' 
-                            style={balance.totalBalance > 0? {
-                                color: "#1cc29f"
-                            } :
-                            balance.totalBalance<0 ? {
-                                color: "#ff6632"
-                            } :
-                            {
+            ) : (
+                <div className={bar? 'dashboard-main-container-closed':'dashboard-main-container'}>
+                    <div className='dashboard-summary-container'>
+                        <div className='dashboard-ts'> Total Summary</div>
+                        <div className='dashboard-balances'>
+                            {renderBalanceCard("Total Balance", balance.totalBalance)}
+                            {renderBalanceCard("Total Amount You Owe", -balance.amountYouOwe)}
+                            {renderBalanceCard("Total Amount You're Owed", balance.amountOwed)}
+                        </div>
+                    </div>
 
-                            }
-                            } >
-                            {balance.totalBalance<0 ? "-" : balance.totalBalance>0? "+": ""}₹
-                            {Math.abs(balance.totalBalance).toFixed(2)}
-                            </div>
+                    <div className='dashboard-group-summary-container'>
+                        <div className="dashboard-group-header">
+                            <div className='dashboard-gs'>Group Summary</div>
+                            {renderGroupFilter()}
                         </div>
-                        <div className='dashboard-balance-container2'>
-                            <div className='dashboard-balance-title'> Total Amount You Owe</div>
-                            <div className='dashboard-balance-amount' 
-                            style={balance.amountYouOwe>0 ? {color: "#ff6632"} : {}}>₹
-                            {balance.amountYouOwe.toFixed(2)}</div>
-                        </div>
-                        <div className='dashboard-balance-container3'>
-                            <div className='dashboard-balance-title'> Total Amount You're Owed</div>
-                            <div className='dashboard-balance-amount' 
-                            style={balance.amountOwed>0 ? {color: "#1cc29f"} : {}}>₹
-                            {balance.amountOwed.toFixed(2)}</div>
+                        <div className={`dashboard-groups-container ${isFilterActive() ? 'single-column' : ''}`} 
+                             ref={groupRef}>
+                            {getFilteredGroups().map(({title, groups}) => 
+                                renderGroupSection(title, groups)
+                            )}
                         </div>
                     </div>
                 </div>
-
-                <div className='dashboard-group-summary-container'  
-                style={groupsOpen? {height:"auto"}: {height:"55%", overflow:"hidden"}}
-                >
-                    <div className='dashboard-gs'>Group Summary</div>
-                    <div className='dashboard-groups-container' 
-                    // style={groupsOpen? {height:""}: {}}
-                ref={groupRef}>
-
-                     <div className='dashboard-group-container1' 
-                     onClick={() => {console.log(groups1);}}
-                        >
-                            <div className='dashboard-group-container-title'>
-                                Groups You Owe
-                            </div>
-                            <div className='dashboard-group-container-body'>
-                                {groups1 && groups1.map((dataEl) => {
-                                    return(
-                                        <div className='dashboard-group-element'>
-                                            <div className='dashboard-group-element-image'>
-                                                <img src = {dataEl.groupPhoto} width="100%" height="100%"/>
-                                            </div>
-                                            <div className='dashboard-group-element-name'>
-                                                {dataEl.groupName} 
-                                            </div>
-                                            <div className='dashboard-group-element-amount'>
-                                            ₹{(-1*dataEl.groupBalance).toFixed(2)}
-                                            </div>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                     </div>
-                     <div className='dashboard-group-container2'
-                     onClick={() => {console.log( groups2);}}>
-                            <div className='dashboard-group-container-title'>
-                                Groups Owe to You
-                            </div>
-                            <div className='dashboard-group-container-body'>
-                                {groups2 && groups2.map((dataEl) =>{
-                                    return(
-                                        <div className='dashboard-group-element'>
-                                            <div className='dashboard-group-element-image'>
-                                                <img src = {dataEl.groupPhoto} width="100%" height="100%"/>
-                                            </div>
-                                            <div className='dashboard-group-element-name'>
-                                                {dataEl.groupName}
-                                            </div>
-                                            <div className='dashboard-group-element-amount'>
-                                            ₹{dataEl.groupBalance.toFixed(2)}
-                                            </div>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-
-                     </div>
-                     <div className='dashboard-group-container3'
-                     onClick={() => {console.log( groups3);}}>
-                            <div className='dashboard-group-container-title'>
-                                Settled Up Groups
-                            </div>
-                            <div className='dashboard-group-container-body'>
-                                {groups3 && groups3.map((dataEl) => {
-                                    return(
-                                        <div className='dashboard-group-element'>
-                                            <div className='dashboard-group-element-image'>
-                                                <img src = {dataEl.groupPhoto} width="100%" height="97%"/>
-                                            </div>
-                                            <div className='dashboard-group-element-name'>
-                                                {dataEl.groupName}
-                                            </div>
-                                            <div className='dashboard-group-element-amount'>
-                                            {/* ₹{dataEl.groupBalance.toFixed(2)} */}
-                                            </div>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-
-                     </div>
-
-                    </div>
-                </div>
-
-            </div>}
-
+            )}
         </div>
     )
 }
