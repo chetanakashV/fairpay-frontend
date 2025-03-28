@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import Landing from './Pages/Landing'
 import About from './Pages/About'
-import Temp from './Pages/Temp';
+import Test from './Pages/Test';
 
 import Dashboard from './Pages/Options/Dashboard';
 import Groups from './Pages/Options/Groups'
@@ -34,7 +34,7 @@ function App() {
               <Route exact path = "/activity" element = {<Activity/>} />
               <Route exact path = "/settings" element = {<Settings/>} />
               <Route exact path = "/account" element = {<Account/>} />
-              <Route exact path = "/test" element = {<Temp/>} />
+              <Route exact path = "/test" element = {<Test/>} />
           </Routes>
       </Router>
       </UserProvider>
