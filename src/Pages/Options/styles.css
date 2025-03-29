@@ -1558,13 +1558,15 @@
 
 
 /* Friends */
-.friends-container{
+.friends-container {
     height: 85%;
     width: 100%;
     margin: 5% 1% 0 6%;
-    border-radius: 5px;
+    border-radius: 12px;
     display: flex;
-    transition: width 0.5s, margin-left 0.5s; 
+    gap: 24px;
+    transition: all 0.3s ease;
+    padding: 0 24px;
 
     @media screen and (min-height: 750px) {
         height: 83%;
@@ -1572,234 +1574,270 @@
     }
 }
 
-.friends-container-closed{
+.friends-container-closed {
     height: 85%;
     width: 83%;
-    margin: 5% 0 0 16%; 
-    border-radius: 5px;
+    margin: 5% 0 0 16%;
+    border-radius: 12px;
     display: flex;
-    transition: width 0.5s, margin-left 0.5s;
+    gap: 24px;
+    transition: all 0.3s ease;
+    padding: 0 24px;
 
     @media screen and (min-height: 750px) {
         height: 83%;
         margin-top: 7%;
-        margin-left: 15%;
     }
 }
 
-.friends-list-container{
+.friends-list-container {
     height: 100%;
-    width: 25%; 
-    margin-right: 1%;
-    margin-left: 1%;
-    border-radius: 5px;
+    width: 320px;
+    flex-shrink: 0;
+    border-radius: 12px;
     background-color: white;
-    padding: 1%;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.friends-details-container{
+.friends-details-container {
     height: 100%;
-    width: 73%;
-    border-radius: 5px;
+    flex: 1;
+    border-radius: 12px;
     background-color: white;
-    padding: 2%;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.friends-options-bar{
-    height: 7%;
-    margin-bottom: 3%;
+.friends-options-bar {
+    height: 44px;
+    margin-bottom: 24px;
     width: 100%;
     border-radius: 10px;
     display: flex;
     overflow: hidden;
-    border: 1px solid #d8d8d8;
-    z-index: 10;
+    border: 1px solid #e0e0e0;
     background-color: #d8d8d8;
+    z-index: 10;
 }
 
-.fob-option{
+.fob-option {
     height: 100%;
     width: 34%;
-    font-size: smaller;
+    font-size: 14px;
+    font-weight: 500;
     display: flex;
     align-items: center;
-    overflow: hidden;
-    cursor: pointer;
-    z-index: 0;
     justify-content: center;
+    cursor: pointer;
     background-color: #d8d8d8;
+    color: #2d3436;
+    transition: all 0.2s ease;
 }
 
-.fob-option#end{
-    width: 33%;
+.fob-option:last-child {
+    width: 32%;
 }
 
-.friends-list{
-    height: 90%;
+.fob-option.active {
+    background-color: white;
+}
+
+.friends-list {
+    height: calc(100% - 68px);
     width: 100%;
-}   
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
+}
 
-.friends-list-element{
-    height: 11%;
+.friends-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.friends-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.friends-list::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.friends-list-element {
+    height: 72px;
     width: 100%;
     display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    margin-bottom: 8px;
     cursor: pointer;
-    /* justify-content: center; */
-    padding: 2%;
-    border-radius: 5px;
-
-    @media screen and (min-height: 750px) {
-        height: 8%;
-    }
 }
 
 .friends-list-element:hover {
-    background-color: #d8d8d8;
+    background-color: #f8f9fa;
+    transform: translateX(4px);
 }
 
-.fle-image{
-    width: 15%;
-    margin-left: 2%;
-    height: 100%;
-    border-radius: 50px;
+.fle-image {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
     overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.fle-name{
-    width: 55%;
-    padding-left: 5%;
-    display: flexbox;
-    align-content: center;
-    height: 100%;
+.fle-name {
+    flex: 1;
+    padding: 0 12px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #2d3436;
+    white-space: nowrap;
     overflow: hidden;
-    
+    text-overflow: ellipsis;
 }
 
-.fle-options{
-    width: 28%;
-    height: 100%;
-}
-
-.fle-options#one{
+.fle-options {
     display: flex;
+    gap: 8px;
+    padding-left: 8px;
+}
+
+.fle-options button {
+    min-width: 80px;
+    height: 32px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    align-items: center;
+    gap: 4px;
 }
 
-.fdc-head{
-    height: 14%;
+.fdc-head {
+    height: auto;
     width: 100%;
-    border-bottom: 1px solid #959595;
+    border-bottom: 1px solid #e0e0e0;
     display: flex;
     align-items: center;
-    padding-left: 2%;
-    padding-bottom: 1%;
-
-    @media screen and (min-height: 750px) {
-        height: 12%;
-    }
+    padding: 0 0 24px;
+    margin-bottom: 24px;
 }
 
-.fdc-head #image{
-    height: 100%;
-    width: 8%;
-    background-color: black;
-    border-radius: 50px;
+.fdc-head #image {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
     overflow: hidden;
-
-    @media screen and (min-height: 750px) {
-        height: 90%;
-        display: flex;
-        align-items: start;
-    }
-
+    flex-shrink: 0;
+    border: 3px solid #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.fdc-head #name{
-    height: 100%;
-    width: 60%;
-    padding-left: 1%;
+.fdc-head #name {
+    padding-left: 20px;
 }
 
-.fdc-head #name #title{
-    font-size: x-large;
+.fdc-head #name #title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #2d3436;
+    margin-bottom: 4px;
 }
 
-.fdc-head #name #desc{
-    font-size: medium;
+.fdc-head #name #email {
+    font-size: 14px;
+    color: #666;
 }
 
-.fdc-body{
-    height: 86%;
+.fdc-body {
+    height: calc(100% - 120px);
     width: 100%;
-    margin-top: 1%;
-    /* background-color: orange; */
     overflow: auto;
-    scrollbar-width: none;
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
+    padding-right: 8px;
 }
 
-.fdc-group-element{
-    height: 15%;
-    width: 90%;
-    margin-left: 5%;
-    /* background-color: aqua; */
-    margin-top: 1%;
-    margin-bottom: 1%;
-    padding-left: 1%;
-    padding-top: 0.5%;
-    padding-bottom: 0.5%;
+.fdc-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.fdc-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.fdc-body::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.fdc-group-element {
+    height: auto;
+    min-height: 80px;
+    width: 100%;
+    margin-bottom: 16px;
+    padding: 16px;
     display: flex;
-    border-radius: 10px;
-    border: 1px solid #959595;
-    padding: 1%;
-
-    @media screen and (min-height: 750px) {
-        height: 12%;
-    }
+    align-items: center;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.2s ease;
+    background-color: white;
 }
 
-.fdc-group-element #image{
-    height: 95%;
-    width: 7%;
-    margin-right: 3%;
-    background-color: black;
-    border-radius: 50px;
+.fdc-group-element:hover {
+    border-color: #1cc29f;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.fdc-group-element #image {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
     overflow: hidden;
-    border: 1px solid #d8d8d8;
+    flex-shrink: 0;
+    margin-right: 16px;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.fdc-group-element #name{
-    height: 95%;
-    width: 50%;
-    /* background-color: orange; */
-    font-size: larger;
+.fdc-group-element #name {
+    flex: 1;
+    font-size: 16px;
+    font-weight: 500;
+    color: #2d3436;
     display: flex;
-    justify-content: start; 
     align-items: center;
 }
 
-.fdc-group-element #expense{
-    height: 95%;
-    width: 40%;
+.fdc-group-element #expense {
+    text-align: right;
+    padding-left: 16px;
 }
 
-.fdc-group-element #expense #name{
-    height: 25%;
-    width: 100%;
-    font-size: smaller;
-    font-weight: 300;
-    padding-right: 15%;
-    justify-content: end;
-    color: #959595;
+.fdc-group-element #expense #name {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 4px;
+    justify-content: flex-end;
 }
 
-.fdc-group-element #expense #amount{
-    height: 75%;
-    width: 100%;
-    font-size: x-large;
+.fdc-group-element #expense #amount {
+    font-size: 18px;
+    font-weight: 600;
     display: flex;
-    justify-content: end;
-    padding-right: 10%;
+    justify-content: flex-end;
 }
 
 /* ends */
