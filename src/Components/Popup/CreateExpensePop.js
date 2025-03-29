@@ -500,10 +500,9 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                     width: "12%", 
                     marginLeft: "45%",
                     display:  "flex",
-                        marginBottom: "1%",
+                    marginBottom: "1%",
                     backgroundColor: "white", 
                 }}>
-
                       <motion.button style={{
                         width: "100%", 
                         height: "100%", 
@@ -516,7 +515,6 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                         border: "1px solid lightgray", 
                       }}
                       onClick={distributeEqually}
-                     //go here
                       whileHover={{
                         boxShadow: "inset 0px 0px 3px #c1c1c1"
                       }}
@@ -524,7 +522,6 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                       >
                         =
                       </motion.button>
-
                 </div>
 
                 <div style={{
@@ -538,22 +535,20 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                     borderRadius: "10px",
                     border: "1px solid #959595", 
                 }}>
-
                 {
-                    users.forEach((dataEl) => {
-                        return(
-                           <div style={{
+                    users.map((dataEl) => (
+                           <div key={dataEl.userId} style={{
                             height: "25%", width: "100%", margin: "1%", display: "flex", alignItems: "center", padding: "0% 1%"
                            }}>
                            <div style={{
                             height: "85%",  backgroundColor: "black", width: "7%", borderRadius: "50px", overflow: "hidden"
                            }}>
-                            <img src={dataEl.userPhoto}  width="100%" height="100%"  />
+                            <img src={dataEl.userPhoto} alt={dataEl.userName} width="100%" height="100%"  />
                            </div>
                             <div style={{
                                 height: "85%", width: "25%", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", paddingLeft: "2%", display: "grid", alignItems: "center"
                             }}>
-                            {dataEl.userName}
+                            {dataEl.userId === user._id ? "You" : dataEl.userName}
                             </div>
 
                             <div style={{
@@ -566,30 +561,9 @@ const CreateExpensePop = ({handleClose, selectedGroup}) => {
                                value={paymentDetails.participants.find(participant => participant.userId === dataEl.userId)?.balance.toFixed(2) || ''}
                               style={{border: "none"}} />
                             </div>
-
                            </div>
-                        )
-                    })
+                    ))
                 }
-
-                {/* {paymentDetails.participants.forEach((participant, index) => (
-                    <div key={index} style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        width: "100%"
-                    }}>
-                        <div>{users.find(user => user.userId === participant.userId)?.userName}</div>
-                        <input
-                            type="number"
-                            className="input-3"
-                            value={participant.balance}
-                            onChange={(e) => handleNumber(participant, e)}
-                            name="balance"
-                        />
-                    </div>
-                ))} */}
-               
                 </div>
 
                 <div style={{
