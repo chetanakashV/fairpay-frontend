@@ -32,7 +32,7 @@
 .group-container-closed{
     height: 85%;
     width: 83%;
-    margin: 5% 0 0 16%; 
+    margin: auto;
     border-radius: 12px;
     display: flex;
     gap: 24px;
