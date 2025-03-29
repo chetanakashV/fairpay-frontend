@@ -1,11 +1,11 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState, useMemo} from "react";
 import Sidebar from '../../Components/Sidebar'
 import Profile from "../../Components/Profile";
 import Title from '../../Components/Title'
 import Axios from 'axios'
-import {motion} from 'framer-motion'
+import {motion, AnimatePresence} from 'framer-motion'
 import { ToastContainer, toast } from "react-toastify";
-import { Done, Close } from "@mui/icons-material";
+import { Done, Close, PersonAdd, Check, WifiOff, Sync } from "@mui/icons-material";
 import { SocketContext, UserContext } from "../../Helper/UserContext";
 import animationData from '../../Lotties/FriendsLoading.json'
 import animationData2 from '../../Lotties/FChatsLoading.json'
@@ -30,6 +30,203 @@ const defaultOptions2 = {
     }
   };
 
+const ConnectionStatus = ({ status }) => {
+    const messages = {
+        connecting: {
+            icon: <Sync style={{ fontSize: 48, color: "#1cc29f" }} className="rotating" />,
+            text: "Establishing connection...",
+        },
+        disconnected: {
+            icon: <WifiOff style={{ fontSize: 48, color: "#ff652f" }} />,
+            text: "Connection not established\nPlease wait while we reconnect...",
+        }
+    };
+
+    const currentStatus = messages[status];
+
+    return (
+        <div style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100%",
+            color: "#666",
+            gap: "16px",
+            textAlign: "center"
+        }}>
+            {currentStatus.icon}
+            <div style={{ fontSize: "16px", whiteSpace: "pre-line" }}>
+                {currentStatus.text}
+            </div>
+        </div>
+    );
+};
+
+const FriendsList = React.memo(({ option, people, userLookup, handleRequest, handleSelectUser }) => {
+    return (
+        <div className="friends-list">
+            {people[option].map(person => {
+                const userId = option === "Suggestions" ? person.userId : person;
+                const userData = userLookup[userId] || { userName: "not found", userPhoto: "" };
+                
+                return (
+                    <motion.div 
+                        key={userId}
+                        className="friends-list-element" 
+                        onClick={() => handleSelectUser(person)}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <div className="fle-image">
+                            <img src={userData.userPhoto} alt={userData.userName} style={{height: "100%", width: "100%"}}/>
+                        </div>
+                        <div className="fle-name">{userData.userName}</div>
+                        <div className="fle-options">
+                            {option === "Suggestions" && (
+                                person.sent ? (
+                                    <motion.div
+                                        style={{
+                                            fontSize: "14px",
+                                            color: "#959595",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: "4px"
+                                        }}
+                                    >
+                                        <Check fontSize="small" /> Sent
+                                    </motion.div>
+                                ) : (
+                                    <motion.button
+                                        style={{
+                                            border: "2px solid #1cc29f",
+                                            background: "none",
+                                            color: "#1cc29f"
+                                        }}
+                                        whileHover={{ scale: 1.05, backgroundColor: "#1cc29f", color: "white" }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleRequest(userId, "sendRequest");
+                                        }}
+                                    >
+                                        <PersonAdd fontSize="small" /> Add
+                                    </motion.button>
+                                )
+                            )}
+                            {option === "Requests" && (
+                                <div style={{display: "flex", gap: "8px"}}>
+                                    <motion.button
+                                        style={{
+                                            border: "2px solid #1cc29f",
+                                            background: "none",
+                                            color: "#1cc29f"
+                                        }}
+                                        whileHover={{ scale: 1.05, backgroundColor: "#1cc29f", color: "white" }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleRequest(person, "acceptRequest");
+                                        }}
+                                    >
+                                        <Done fontSize="small" />
+                                    </motion.button>
+                                    <motion.button
+                                        style={{
+                                            border: "2px solid #ff652f",
+                                            background: "none",
+                                            color: "#ff652f"
+                                        }}
+                                        whileHover={{ scale: 1.05, backgroundColor: "#ff652f", color: "white" }}
+                                        whileTap={{ scale: 0.95 }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleRequest(person, "rejectRequest");
+                                        }}
+                                    >
+                                        <Close fontSize="small" />
+                                    </motion.button>
+                                </div>
+                            )}
+                        </div>
+                    </motion.div>
+                );
+            })}
+        </div>
+    );
+});
+
+const FriendDetails = React.memo(({ selectedUser, userLookup, groups, detailsLoad }) => {
+    if (!selectedUser) {
+        return (
+            <div className="friends-details-container" style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#666",
+                fontSize: "16px"
+            }}>
+                Select a friend to view details
+            </div>
+        );
+    }
+
+    if (detailsLoad) {
+        return (
+            <div className="friends-details-container" style={{display:"flex", alignItems: "center", justifyContent: "center"}}>
+                <Lottie options={defaultOptions2} isClickToPauseDisabled={true} height={200} width={200} />
+            </div>
+        );
+    }
+
+    const userData = userLookup[selectedUser] || {};
+
+    return (
+        <div className="friends-details-container">
+            <div className="fdc-head">
+                <div id="image">
+                    <img src={userData.userPhoto} alt={userData.userName} style={{width: "100%", height: "100%"}}/>
+                </div>
+                <div id="name">
+                    <div id="title">{userData.userName}</div>
+                    <div id="email">{userData.userEmail}</div>
+                </div>
+            </div>
+            <div className="fdc-body">
+                <AnimatePresence>
+                    {groups.map((element, index) => (
+                        <motion.div 
+                            key={element.groupId}
+                            className="fdc-group-element"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.3, delay: index * 0.1 }}
+                        >
+                            <div id="image">
+                                <img src={element.groupPhoto} alt={element.groupName} width="100%" height="100%"/>
+                            </div>
+                            <div id="name">{element.groupName}</div>
+                            <div id="expense">
+                                <div id="name">
+                                    {element.groupBalance > 0 ? "You lent" : "You Owe"}
+                                </div>
+                                <div id="amount" style={{
+                                    color: element.groupBalance > 0 ? "#1cc29f" : 
+                                           element.groupBalance < 0 ? "#ff652f" : "inherit"
+                                }}>
+                                    ₹{Math.abs(element.groupBalance).toFixed(2)}
+                                </div>
+                            </div>
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
+            </div>
+        </div>
+    );
+});
+
 const Friends = () => {
     const [bar, setBar] = useState(false);
     const [option, setOption] = useState("Friends");
@@ -37,6 +234,7 @@ const Friends = () => {
     
     const [friendsLoad, setFriendsLoad] = useState(true);
     const [detailsLoad, setDetailsLoad] = useState(false);
+    const [connectionStatus, setConnectionStatus] = useState('connecting');
 
     const [groups, setGroups] = useState([]);
     const [selectedUser, setSelectedUser] = useState({});
@@ -50,243 +248,173 @@ const Friends = () => {
         Friends: [], 
         Suggestions: [], 
         Requests: []
-    })
+    });
 
     const fetchData = (body) => {
         const data = JSON.parse(body);
-        
-        data.users.forEach(element => {
-            setUserLookup((prev) => ({
-                ...prev, 
-                [element.userId]: element
-            }))
+        setUserLookup(prevLookup => {
+            const newLookup = { ...prevLookup };
+            data.users.forEach(element => {
+                newLookup[element.userId] = element;
+            });
+            return newLookup;
         });
         
         setPeople({
-            Friends: data.friends, 
-            Suggestions: data.suggestions, 
-            Requests: data.requests
-        })
+            Friends: data.friends || [], 
+            Suggestions: data.suggestions || [], 
+            Requests: data.requests || []
+        });
 
         setFriendsLoad(false);
-    }
+        setConnectionStatus('connected');
+    };
 
     const handleRequest = (item, type) => {
-        let body; 
-        if(type === "sendRequest")
-        {   body = {
-                type: type, 
-                senderId: user._id, 
-                receiverId: item
-            }
+        if (!connected) {
+            toast.error("Cannot process request: No connection");
+            return;
         }
-        else{
-            body = {
-                type: type, 
-                senderId: item, 
-                receiverId: user._id
-            }
-        }
+
+        const body = type === "sendRequest" 
+            ? { type, senderId: user._id, receiverId: item }
+            : { type, senderId: item, receiverId: user._id };
         
         Axios.post(`${process.env.REACT_APP_SERVER_URI}/friends/handleRequest`, body)
-        .then(response => {
-            if(response.data.status === 400){
-                toast.error("Error Processing the Request");
-                console.log(response)
-            }
-        })
-    }
-    
-    const handleBar = (state) => {setBar(state);}
-    const getUser = (userId) => {
-        return userLookup[userId] || {userName: "not found" };
-    }
+            .then(response => {
+                if(response.data.status === 400){
+                    toast.error("Error Processing the Request");
+                    console.error(response);
+                }
+            })
+            .catch(error => {
+                toast.error("Network Error");
+                console.error(error);
+            });
+    };
 
-    const fetchGroups = (body) =>{
-        const data = JSON.parse(body); 
-        setGroups(data);
-        setDetailsLoad(false);
-    }
-
-    const handleSelecteUser = (item) => {
+    const handleSelectUser = (item) => {
         if(option !== "Friends") return;
+        if(!connected) {
+            toast.error("Cannot fetch details: No connection");
+            return;
+        }
         if(client && connected){
             setSelectedUser(item);
             setIsUserSelected(true);
             setDetailsLoad(true);
             client.send(`/app/getDetails/${user._id}`, {}, item);
         }
-    }
+    };
 
     useEffect(() => {
-        let subscription; 
-        if(client && connected){
-            const timer = setTimeout(() => {
-                subscription = client.subscribe(`/friends/${user._id}`, (msg) => {
-                    const response = JSON.parse(msg.body);
-                    
-                    if(response.messageType === "userFriends") fetchData(response.body)
-                    else if(response.messageType === "commonGroups") fetchGroups(response.body)
-                    else console.log(response);
-                })
-                setSub(true)
-            }, 1000)
+        let subscription;
+        let retryTimeout;
+        let retryCount = 0;
+        const maxRetries = 5;
 
-            return () => {
-                clearTimeout(timer);
-                if(subscription)
-                    {subscription.unsubscribe();
-                    setSub(false);}
+        const setupConnection = () => {
+            if (client && connected) {
+                try {
+                    setConnectionStatus('connecting');
+                    subscription = client.subscribe(`/friends/${user._id}`, (msg) => {
+                        const response = JSON.parse(msg.body);
+                        
+                        if(response.messageType === "userFriends") fetchData(response.body);
+                        else if(response.messageType === "commonGroups") {
+                            setGroups(JSON.parse(response.body));
+                            setDetailsLoad(false);
+                        }
+                    });
+                    setSub(true);
+                    retryCount = 0;
+                    // Initial data fetch
+                    client.send(`/app/getFriends/${user._id}`, {}, "");
+                } catch (error) {
+                    console.error("Connection error:", error);
+                    setConnectionStatus('disconnected');
+                    if (retryCount < maxRetries) {
+                        retryCount++;
+                        retryTimeout = setTimeout(setupConnection, 3000);
+                    }
+                }
+            } else {
+                setConnectionStatus('disconnected');
+                if (retryCount < maxRetries) {
+                    retryCount++;
+                    retryTimeout = setTimeout(setupConnection, 3000);
+                }
             }
-        }
-    }, [client, connected])   
-    
-    useEffect(() => {
-        if(sub){
-            client.send(`/app/getFriends/${user._id}`, {}, "")
-        }
-    }, [sub])
+        };
 
-    const handleOption = (e) => {
-        setOption(e.currentTarget.getAttribute("data-value"));
-    }
+        setupConnection();
+
+        return () => {
+            if(subscription) {
+                subscription.unsubscribe();
+                setSub(false);
+            }
+            if(retryTimeout) {
+                clearTimeout(retryTimeout);
+            }
+        };
+    }, [client, connected]);
 
     return(
         <div className="page-container">
-             <Sidebar option = "Friends" handleBar={handleBar}/>
-             <Profile/> <Title title="Friends" bar={bar}/>
-             <ToastContainer/>
-             <div className={bar? "friends-container-closed": "friends-container"}>
+            <Sidebar option="Friends" handleBar={setBar}/>
+            <Profile/>
+            <Title title="Friends" bar={bar}/>
+            <ToastContainer/>
+            <div className={bar ? "friends-container-closed" : "friends-container"}>
                <div className="friends-list-container">
                     <div className="friends-options-bar">
-                        <div className="fob-option" data-value = "Friends"
-                         onClick={handleOption} style={option==="Friends"? {backgroundColor: "white"}: {}} id="end"> Friends</div>
-                        <div className="fob-option" data-value = "Suggestions"
-                         onClick={handleOption} style={option==="Suggestions"? {backgroundColor: "white"}: {}}> Suggestions</div>
-                        <div className="fob-option" data-value = "Requests" 
-                        onClick={handleOption} style={option==="Requests"? {backgroundColor: "white"}: {}} id="end">  Requests</div>
-                    </div>
-                    <div className="friends-list">
-                            {friendsLoad ? 
-                                <div className="friends-list-container">
-                                <Lottie options={defaultOptions} isClickToPauseDisabled={true} height={300} width={300} /> </div>
-                            : people[option].map(person => (
-                                 <div className="friends-list-element" onClick={() => {handleSelecteUser(person)}}>
-                                    <div className="fle-image">
-                                        <img src={option === "Suggestions"? getUser(person.userId).userPhoto : getUser(person).userPhoto} style={{height: "100%", width: "100%", backgroundColor: "black"}}/>
-                                    </div>
-                                    <div className="fle-name"> {option === "Suggestions"? getUser(person.userId).userName : getUser(person).userName}</div>
-                                    <div className="fle-options" id={option==="Suggestions"?"one": option==="Requests"? "two": "three"}>
-                                        {
-                                            option==="Suggestions"?
-                                                person.sent?
-                                                <div style={{
-                                                    fontSize: "medium", 
-                                                    cursor: "default", 
-                                                    color: "#959595"
-                                                }}> sent</div>
-                                                :<motion.button
-                                                style={{
-                                                    background: "none", 
-                                                    border: "2px solid #1cc29f", 
-                                                    borderRadius: "5px", 
-                                                    height: "70%", 
-                                                    fontSize: "medium",
-                                                    width: "75%", 
-                                                    color: "#1cc29f", 
-                                                    cursor: "pointer"
-                                                }}
-                                                whileHover={{scale: 1.1}}
-                                                whileTap={{scale: 0.9}}
-                                                onClick={() => 
-                                                {handleRequest(person.userId, "sendRequest")}}
-                                                >
-                                                    Add
-                                                </motion.button>
-                                            :
-                                            option === "Requests"?
-                                                <div style={{display: "flex", paddingLeft: "5%", columnGap: "10%", justifyContent: "center", alignItems: "center", paddingTop: "10%"}}>
-                                                <motion.button
-                                                style={{
-                                                    background: "none", 
-                                                    border: "2px solid #1cc29f", 
-                                                    borderRadius: "5px", 
-                                                    height: "70%", 
-                                                    width: "40%", 
-                                                    color: "#1cc29f", 
-                                                    cursor: "pointer",
-                                                    display: "flex", 
-                                                    justifyContent: "center",
-                                                    alignItems: "center",
-                                                }}
-                                                whileHover={{scale: 1.1}}
-                                                whileTap={{scale: 0.9}}
-                                                onClick={() => {handleRequest(person, "acceptRequest")}}
-                                                >
-                                                    <Done/>
-                                                </motion.button>
-                                                <motion.button
-                                                style={{
-                                                    background: "none", 
-                                                    border: "2px solid #ff652f", 
-                                                    borderRadius: "5px", 
-                                                    height: "70%", 
-                                                    width: "40%", 
-                                                    display: "flex", 
-                                                    justifyContent: "center",
-                                                    alignItems: "center",
-                                                    color: "#ff652f", 
-                                                    cursor: "pointer"
-                                                }}
-                                                whileHover={{scale: 1.1}}
-                                                whileTap={{scale: 0.9}}
-                                                onClick={() => {handleRequest(person, "rejectRequest")}}
-                                                >
-                                                    <Close/>
-                                                </motion.button>
-                                                </div>
-                                            :
-                                            null
-                                        }
-                                    </div>
-                                </div>
-                            ))}
-                    </div>
-                </div>
-                {!!isUserSelected ? detailsLoad ?
-                <div className="friends-details-container" style={{display:"flex", alignItems: "center"}}>
-                <Lottie options={defaultOptions2} isClickToPauseDisabled={true} height={300} width={300} />
-                </div>: 
-                <div className="friends-details-container">
-                    <div className="fdc-head">
-                        <div id="image"><img src={getUser(selectedUser).userPhoto} style={{width: "100%", height: "100%"}}/></div>
-                        <div id="name">
-                           <div id="title">{getUser(selectedUser).userName}</div> 
-                           <div id="email">{getUser(selectedUser).userEmail}</div> 
-                        </div>
-                    </div>
-                    <div className="fdc-body">
-                    {groups && groups.map(element => {
-                        return(
-                            <div className="fdc-group-element"> 
-                                <div id="image"><img  src={element.groupPhoto} 
-                                width="100%" height="100%"/></div>
-                                <div id="name">{element.groupName}</div>
-                                <div id="expense">
-                                    <div id="name" >
-                                    {element.groupBalance>0? "You lent": "You Owe"}</div>
-                                    <div id="amount" style={element.groupBalance>0?
-                                    {color: "#1cc29f"}:element.groupBalance < 0 ?{color: "#ff652f"}: {}}>₹{Math.abs(element.groupBalance).toFixed(2)}</div>
-                                </div>
+                        {["Friends", "Suggestions", "Requests"].map((opt) => (
+                            <div
+                                key={opt}
+                                className={`fob-option ${option === opt ? 'active' : ''}`}
+                                onClick={() => setOption(opt)}
+                            >
+                                {opt}
                             </div>
-                        )
-                    }) }
+                        ))}
                     </div>
-                </div>: 
-                <div className="friends-details-container"></div>}
-             </div>
+                    {connectionStatus !== 'connected' ? (
+                        <ConnectionStatus status={connectionStatus} />
+                    ) : friendsLoad ? (
+                        <div style={{display: "flex", justifyContent: "center", alignItems: "center", height: "calc(100% - 68px)"}}>
+                            <Lottie options={defaultOptions} isClickToPauseDisabled={true} height={200} width={200} />
+                        </div>
+                    ) : (
+                        <FriendsList 
+                            option={option}
+                            people={people}
+                            userLookup={userLookup}
+                            handleRequest={handleRequest}
+                            handleSelectUser={handleSelectUser}
+                        />
+                    )}
+                </div>
+                <FriendDetails
+                    selectedUser={isUserSelected ? selectedUser : null}
+                    userLookup={userLookup}
+                    groups={groups}
+                    detailsLoad={detailsLoad}
+                />
+            </div>
+            <style>
+                {`
+                    @keyframes rotate {
+                        from { transform: rotate(0deg); }
+                        to { transform: rotate(360deg); }
+                    }
+                    .rotating {
+                        animation: rotate 2s linear infinite;
+                    }
+                `}
+            </style>
         </div>
-    )
-}
+    );
+};
 
 export default Friends; 
