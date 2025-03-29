@@ -184,8 +184,11 @@ const downloadCSV = (csvContent, filename) => {
 
 
     const handleSelectExpense = (id) => {
-        if(selectedExpense === id) setSelectedExpense("");
-        else setSelectedExpense(id);
+        if(selectedExpense === id) {
+            setSelectedExpense("");
+        } else {
+            setSelectedExpense(id);
+        }
     }
 
     const fetchUserGroups = async (body) => {
@@ -499,7 +502,7 @@ const downloadCSV = (csvContent, filename) => {
             <div className={bar ? "group-container-closed" : "group-container"}>
                 <div className="group-name-container">
                     <div className="group-been-in">
-                        <div style={{width: "80%"}}>Groups you've been in</div>
+                        <div style={{width: "80%"}}>Your Groups</div>
                         {!showPop && !showExpensePop && !showEditGroupPop && !showGroupInfoPop && <Add className="create-group-icon" onClick={() => setShowPop(true)} />}
                     </div>
                     <div className="group-list-container">
@@ -568,16 +571,12 @@ const downloadCSV = (csvContent, filename) => {
                                 </div>
                                 <div className="group-details-body">
                                     {expenses && expenses.map((dataEl) => (
-                                        <div className="group-expense-element-container" style={
-                                            dataEl._id === selectedExpense ? {
-                                                height: "55%"
-                                            }:{ }
-                                        }>
+                                        <div 
+                                            key={dataEl._id}
+                                            className={`group-expense-element-container ${dataEl._id === selectedExpense ? 'expanded' : ''}`}
+                                        >
                                             <div className="group-expense-element"
-                                            style={dataEl._id === selectedExpense ? {
-                                                height: "25%", transition: "height 0s"
-                                            }: {}}
-                                             onClick={() => {handleSelectExpense(dataEl._id)}} >
+                                                onClick={() => handleSelectExpense(dataEl._id)}>
                                                 <div className="group-expense-date" title={getISO(dataEl.transactionDate)}>
                                                     <div className="group-expense-date-month">
                                                         {getMonth(dataEl.transactionDate)}
@@ -597,55 +596,64 @@ const downloadCSV = (csvContent, filename) => {
                                                         paid
                                                     </div>
                                                     <div id="cont2">
-                                                        ₹
-                                                        {dataEl.totalAmount.toFixed(2)}
+                                                        ₹{dataEl.totalAmount.toFixed(2)}
                                                     </div>
                                                 </div>
                                                 <div className="group-expense-lent">
                                                     <div id="cont1">
                                                         {users &&
                                                             dataEl.contributorId === user._id ? "You lent" :
-                                                            "You Owe "}
-                                                        
+                                                            "You Owe"}
                                                     </div>
-                                                    <div id="cont2" style={dataEl.contributorId === user._id ? { color: "#1cc29f" } : { color: "#ff652f" }}>
-                                                        ₹
-                                                        {users &&
+                                                    <div id="cont2" style={dataEl.contributorId === user._id ? 
+                                                        { color: "#1cc29f" } : { color: "#ff652f" }}>
+                                                        ₹{users &&
                                                             dataEl.contributorId === user._id ?
                                                             (dataEl.totalAmount - getAmountFromExpense(dataEl)).toFixed(2) :
                                                             getAmountFromExpense(dataEl)}
                                                     </div>
                                                 </div>
-                                                <div className="group-expense-delete" >
-                                                    <Close id="expense-delete"
-                                                      onClick={(e) => handleDeleteExpense
-                                                      (dataEl,e)}/>
+                                                <div className="group-expense-delete">
+                                                    <Close onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleDeleteExpense(dataEl, e);
+                                                    }}/>
                                                 </div>
                                             </div>
-                                             {dataEl._id===selectedExpense &&
-                                             <div className="expense-details">
-                                        
-
-                                                {dataEl.participants.map((el) => {
-                                                return(
-                                                    <div className="expense-details-element">
-                                                        <div  className="expense-details-element-image">
-                                                    <img src={getUserById(el.userId).userPhoto} width="100%" height="100%"/>
-                                                        </div>
-                                                        <div
-                                                        className="expense-details-element-content"
-                                                     >
-                                                         {el.userId === dataEl.contributorId? getUserById(el.userId).userName + " paid " + dataEl.totalAmount + " and owes " : getUserById(el.userId).userName + " owes " }
-                                                         {el.balance}
-                                                        </div>
-                                                    </div>
-                                                )
-                                                })}
-
-                                             </div>}
+                                            {dataEl._id === selectedExpense &&
+                                                <div className="expense-details">
+                                                    {dataEl.participants.map((el) => {
+                                                        const participant = getUserById(el.userId);
+                                                        const isPayer = el.userId === dataEl.contributorId;
+                                                        return (
+                                                            <div key={el.userId} className="expense-details-element">
+                                                                <div className="expense-details-element-image">
+                                                                    <img src={participant.userPhoto} alt={participant.userName} />
+                                                                </div>
+                                                                <div className="expense-details-element-content">
+                                                                    <div className="participant-info">
+                                                                        <span>{participant.userName}</span>
+                                                                    </div>
+                                                                    <div className="amount-details">
+                                                                        {isPayer && (
+                                                                            <div className="amount paid">
+                                                                                <span className="label">Paid</span>
+                                                                                ₹{dataEl.totalAmount.toFixed(2)}
+                                                                            </div>
+                                                                        )}
+                                                                        <div className={`amount ${Math.sign(el.balance) >= 0 ? 'owed' : 'gets-back'}`}>
+                                                                            <span className="label">{Math.sign(el.balance) >= 0 ? 'Owes' : 'Gets back'}</span>
+                                                                            ₹{Math.abs(el.balance).toFixed(2)}
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                            }
                                         </div>
                                     ))}
-
                                 </div>
                             </div>
                         </div> :
