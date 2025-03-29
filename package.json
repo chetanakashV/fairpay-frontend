@@ -24,6 +24,7 @@
     "react-slideshow-image": "^4.3.1",
     "react-stomp": "^5.1.0",
     "react-toastify": "^10.0.5",
+    "react-window": "^1.8.11",
     "sockjs-client": "^1.6.1",
     "web-vitals": "^2.1.4"
   },
